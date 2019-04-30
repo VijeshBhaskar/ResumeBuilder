@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ProjectName
+namespace ResumeBuilder
 {
   public class Startup
   {
@@ -26,7 +26,7 @@ namespace ProjectName
     public void Configure(IApplicationBuilder app)
     {
       app.UseDeveloperExceptionPage();
-      
+
       app.UseMvc(routes =>
       {
         routes.MapRoute(

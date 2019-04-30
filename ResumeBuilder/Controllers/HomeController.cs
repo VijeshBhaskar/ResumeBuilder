@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ProjectName.Controllers
+namespace ResumeBuilder.Controllers
 {
   public class HomeController : Controller
   {
-
     [Route("/")]
     public ActionResult Home() { return View(); }
+
   }
 }

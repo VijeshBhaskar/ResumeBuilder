@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'>
+  </head>
+  <body>
+    <h1>Welcome to your personal Resume Builder!</h1>
+    <p>If you would like to build your resume please fill out the information below.</p>
+    <form action="/resume" method="post">
+      <label for="name">Name:</label>
+      <input type="text" name="name" id="name"><br>
+      <label for="birthyear">Year of Birth (YYYY):</label>
+      <input type="number" name="birthyear" id="birthyear"><br>
+      <label for="email">Email:</label>
+      <input type="text" name="email" id="email"><br>
+      <label for="phone">Phone:</label>
+      <input type="text" name="phone" id="phone"><br>
+      <label for="city">City</label>
+      <input type="text" name="city" id="city">
+      <label for="state">State</label>
+      <select name="state" id="state">
+        <option value="AL">Alabama</option>
+        <option value="AK">Alaska</option>
+        <option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option>
+        <option value="CA">California</option>
+        <option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option>
+        <option value="DE">Delaware</option>
+        <option value="DC">District Of Columbia</option>
+        <option value="FL">Florida</option>
+        <option value="GA">Georgia</option>
+        <option value="HI">Hawaii</option>
+        <option value="ID">Idaho</option>
+        <option value="IL">Illinois</option>
+        <option value="IN">Indiana</option>
+        <option value="IA">Iowa</option>
+        <option value="KS">Kansas</option>
+        <option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option>
+        <option value="ME">Maine</option>
+        <option value="MD">Maryland</option>
+        <option value="MA">Massachusetts</option>
+        <option value="MI">Michigan</option>
+        <option value="MN">Minnesota</option>
+        <option value="MS">Mississippi</option>
+        <option value="MO">Missouri</option>
+        <option value="MT">Montana</option>
+        <option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NY">New York</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VT">Vermont</option>
+        <option value="VA">Virginia</option>
+        <option value="WA">Washington</option>
+        <option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WY">Wyoming</option>
+      </select><br>
+      <label for="career">What do you want to be?</label>
+      <select name="career" id="career">
+        <option value="developer">Developer</option>
+        <option value="chef">Chef</option>
+        <option value="doctor">Doctor</option>
+        <option value="athlete">Athlete</option>
+      </select><br>
+      @* <p>What are your favorite colors?</p>
+      <input type="checkbox" name="red" value="red" id="red">
+      <label for="red">Red</label>
+      <input type="checkbox" name="green" value="green" id="green">
+      <label for="green">Green</label>
+      <input type="checkbox" name="blue" value="blue" id="blue">
+      <label for="blue">blue</label> *@
+      <button type="submit">Make me a resume!</button>
+    </form>
+
+  </body>
+</html>
