@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using XPEL.Website.DTO;
 
 namespace Website.Common.Session
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XPEL.Website.DTO
+namespace RB.Website.DTO
 {
     public class ErrorDetailsDTO
     {

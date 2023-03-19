@@ -1,17 +1,14 @@
-﻿using System;
+﻿using RB.Website.DTO;
+using RB.Website.Model;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Website.Common.Helper;
 using Website.Common.Logger;
 using Website.Common.Response;
-using Website.Service;
-using XPEL.Website.DTO;
-using XPEL.Website.Model;
-using Website.Common.Notification;
-using RB.Website.Model;
-using RB.Website.DTO;
 using Website.Common.Session;
+using Website.Service;
 
 namespace Website.Controllers
 {
@@ -306,66 +303,6 @@ namespace Website.Controllers
             ViewBag.TemplateHtml = response;
             return View();
         }
-        //[HttpPost]
-        //[Route("InsertUserDetails")]
-        //public async Task<JsonResult> InsertUserDetails(UserDetailsModel userDetails)
-        //{
-        //    Response<long> response = new Response<long>
-        //    {
-        //        Data = -1
-        //    };
-
-        //    try
-        //    {
-        //        if (!ModelState.IsValid)
-        //        {
-        //            response.Status = ResponseCode.ModelIsNotValid;
-        //            response.Message = await CustomHelper.GetModelStateErrors(ModelState);
-        //            return Json(response, JsonRequestBehavior.AllowGet);
-        //        }
-
-        //        var installerDetails = await UserService.SelectInstallerDetailsByID(userDetails.InstallerID);
-
-        //        UserDetailsDTO user = new UserDetailsDTO()
-        //        {
-        //            UserName = userDetails.UserName,
-        //            Address = userDetails.Address,
-        //            PhoneNumber = userDetails.PhoneNumber,
-        //            Email = userDetails.Email,
-        //            RoleID1 = userDetails.RoleID1,
-        //            Warranty1 = userDetails.Warranty1,
-        //            ConsumedQuantity1 = userDetails.ConsumedQuantity1,
-        //            RoleID2 = userDetails.RoleID2,
-        //            Warranty2 = userDetails.Warranty2,
-        //            ConsumedQuantity2 = userDetails.ConsumedQuantity2,
-        //            VIN = userDetails.VIN,
-        //            RegistrationNumber = userDetails.RegistrationNumber,
-        //            InstallerID = userDetails.InstallerID,
-        //            InstallerName = installerDetails != null ? installerDetails.InstallerName : "",
-        //            MobileNumber1 = installerDetails != null ? installerDetails.MobileNumber1 : ""
-        //        };
-
-        //        UserSaveResponseDTO res = await UserService.InsertUserDetails(user);
-        //        response.Data = res.UserID;
-        //        response.Status = res.UserID > 0 ? ResponseCode.Success : ResponseCode.Failed;
-        //        response.Message = res.Message;
-
-        //        if (res.UserID > 0)
-        //        {
-        //            await new EmailService().SendEmail(user.Email, "Welcome to XPEL India", user);
-        //        }
-
-        //        return Json(response, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Status = ResponseCode.Error;
-        //        response.Message = ex.Message;
-
-        //        await Logger.Error(ex, "Error in UserController.InsertUserDetails");
-        //        return Json(response, JsonRequestBehavior.AllowGet);
-        //    }
-        //}
         [HttpGet]
         [Route("SelectWarrantyByRoleID")]
         public async Task<JsonResult> SelectWarrantyByRoleID(long roleID)
@@ -402,71 +339,6 @@ namespace Website.Controllers
                 response.Message = ex.Message;
 
                 await Logger.Error(ex, "Error in UserController.SelectWarrantyByRoleID");
-                return Json(response, JsonRequestBehavior.AllowGet);
-            }
-        }
-        [HttpPost]
-        [Route("CheckWarranty")]
-        public async Task<JsonResult> CheckWarranty(WarrantyCheckModel request)
-        {
-            Response<WarrantyDetailsDTO> response = new Response<WarrantyDetailsDTO>
-            {
-                Data = null
-            };
-
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    response.Status = ResponseCode.ModelIsNotValid;
-                    response.Message = await CustomHelper.GetModelStateErrors(ModelState);
-                    return Json(response, JsonRequestBehavior.AllowGet);
-                }
-
-                WarrantyCheckDTO warrantyCheck = new WarrantyCheckDTO()
-                {
-                    VIN = request.VIN,
-                    PhoneNumber = request.PhoneNumber
-                };
-
-                response.Data = await UserService.CheckWarranty(warrantyCheck);
-                response.Status = ResponseCode.Success;
-                response.Message = "Success";
-
-                return Json(response, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                response.Status = ResponseCode.Error;
-                response.Message = ex.Message;
-
-                await Logger.Error(ex, "Error in UserController.CheckWarranty");
-                return Json(response, JsonRequestBehavior.AllowGet);
-            }
-        }
-        [HttpGet]
-        [Route("SelectInstallerDetailsByName")]
-        public async Task<JsonResult> SelectInstallerDetailsByName(string installerName)
-        {
-            Response<IEnumerable<InstallerDetailsDTO>> response = new Response<IEnumerable<InstallerDetailsDTO>>
-            {
-                Data = null
-            };
-
-            try
-            {
-                response.Data = await UserService.SelectInstallerDetailsByName(installerName);
-                response.Status = ResponseCode.Success;
-                response.Message = "Success";
-
-                return Json(response, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                response.Status = ResponseCode.Error;
-                response.Message = ex.Message;
-
-                await Logger.Error(ex, "Error in InstallerController.SelectInstallerDetailsByName");
                 return Json(response, JsonRequestBehavior.AllowGet);
             }
         }

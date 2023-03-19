@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Website.Common.ConfigSettings;
-using XPEL.Website.DTO;
+using RB.Website.DTO;
 
 namespace Website.DataAccess
 {
@@ -25,7 +25,7 @@ namespace Website.DataAccess
 
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
-                    var response = await connection.ExecuteScalarAsync<int>("XPEL.InsertErrorLogDetails", param, commandType: CommandType.StoredProcedure);
+                    var response = await connection.ExecuteScalarAsync<int>("RB.InsertErrorLogDetails", param, commandType: CommandType.StoredProcedure);
                 }
             }
 

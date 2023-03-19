@@ -127,7 +127,6 @@
     <Compile Include="Common\ConfigSettings\ConfigSettings.Connection.cs" />
     <Compile Include="Common\Helper\CustomHelper.cs" />
     <Compile Include="Common\Logger\Logger.cs" />
-    <Compile Include="Common\Notification\EmailService.cs" />
     <Compile Include="Common\Response\ResponseCode.cs" />
     <Compile Include="Common\Session\UserSessionDetails.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -2010,6 +2009,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Common\Notification\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dist\css\adminlte.css.map" />

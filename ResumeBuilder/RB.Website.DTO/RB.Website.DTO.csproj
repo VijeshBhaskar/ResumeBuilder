@@ -44,14 +44,11 @@
     <Compile Include="EducationDetailsDTO.cs" />
     <Compile Include="ErrorDetailsDTO.cs" />
     <Compile Include="ExperienceDetailsDTO.cs" />
-    <Compile Include="InstallerDetailsDTO.cs" />
     <Compile Include="TemplateDetailsDTO.cs" />
     <Compile Include="UserDetailsDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserLoginDTO.cs" />
     <Compile Include="UserSaveResponseDTO.cs" />
-    <Compile Include="WarrantyCheckDTO.cs" />
-    <Compile Include="WarrantyDetailsDTO.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

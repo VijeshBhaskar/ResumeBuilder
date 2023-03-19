@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Website.Common.ConfigSettings;
 using Website.Common.Logger;
-using XPEL.Website.DTO;
 
 namespace Website.DataAccess
 {
@@ -256,7 +255,7 @@ namespace Website.DataAccess
                 param.Add("@RoleID", roleID);
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
-                    warranty = await connection.QueryFirstOrDefaultAsync<int>("XPEL.SelectWarrantyByRoleID", param, commandType: CommandType.StoredProcedure);
+                    warranty = await connection.QueryFirstOrDefaultAsync<int>("RB.SelectWarrantyByRoleID", param, commandType: CommandType.StoredProcedure);
                 }
             }
 
@@ -266,70 +265,5 @@ namespace Website.DataAccess
             }
 
             return warranty;
-        }
-        public static async Task<WarrantyDetailsDTO> CheckWarranty(WarrantyCheckDTO request)
-        {
-            WarrantyDetailsDTO warrantyDetails = null;
-
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@VIN", request.VIN);
-                param.Add("@PhoneNumber", request.PhoneNumber);
-
-                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                {
-                    warrantyDetails = await connection.QueryFirstOrDefaultAsync<WarrantyDetailsDTO>("XPEL.CheckWarranty", param, commandType: CommandType.StoredProcedure);
-                }
-            }
-
-            catch (Exception ex)
-            {
-                await Logger.Error(ex, "Error in UserDA.CheckWarranty");
-            }
-            return warrantyDetails;
-        }
-        public static async Task<IEnumerable<InstallerDetailsDTO>> SelectInstallerDetailsByName(string installerName)
-        {
-            IEnumerable<InstallerDetailsDTO> result = null;
-
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@InstallerName", string.Format("%{0}%", installerName));
-
-                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                {
-                    result = await connection.QueryAsync<InstallerDetailsDTO>("XPEL.SelectInstallerDetailsByName", param, commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Logger.Error(ex, "Error in InstallerDA.SelectInstallerDetailsByName");
-            }
-
-            return result;
-        }
-        public static async Task<InstallerDetailsDTO> SelectInstallerDetailsByID(long installerDetailsID)
-        {
-            InstallerDetailsDTO result = null;
-
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@InstallerDetailsID", installerDetailsID);
-
-                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                {
-                    result = await connection.QueryFirstOrDefaultAsync<InstallerDetailsDTO>("XPEL.SelectInstallerDetails", param, commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (Exception ex)
-            {
-                await Logger.Error(ex, "Error in InstallerDA.SelectInstallerDetailsByID");
-            }
-
-            return result;
-        }
-    }
+        }    }
 }

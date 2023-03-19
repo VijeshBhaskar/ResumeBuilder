@@ -3,8 +3,6 @@ using RB.Website.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Website.DataAccess;
-using XPEL.Website.DTO;
-using XPEL.Website.Model;
 
 namespace Website.Service
 {
@@ -49,19 +47,6 @@ namespace Website.Service
         public static async Task<int> SelectWarrantyByRoleID(long roleID)
         {
             return await UserDA.SelectWarrantyByRoleID(roleID);
-        }
-        public static async Task<WarrantyDetailsDTO> CheckWarranty(WarrantyCheckDTO request)
-        {
-            return await UserDA.CheckWarranty(request);
-        }
-        public static async Task<IEnumerable<InstallerDetailsDTO>> SelectInstallerDetailsByName(string installerName)
-        {
-            return await UserDA.SelectInstallerDetailsByName(installerName);
-        }
-
-        public static async Task<InstallerDetailsDTO> SelectInstallerDetailsByID(long installerDetailsID)
-        {
-            return await UserDA.SelectInstallerDetailsByID(installerDetailsID);
         }
     }
 }
