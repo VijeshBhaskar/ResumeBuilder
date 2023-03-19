@@ -20,7 +20,7 @@ namespace Website.Service
         {
             return await UserDA.InsertPersonalDetails(userDetails);
         }
-        public static async Task<UserSaveResponseDTO> InsertExperienceDetails(ExperienceDetailsDTO expDetails)
+        public static async Task<List<ExperienceDetailsDTO>> InsertExperienceDetails(List<ExperienceDetailsDTO> expDetails)
         {
             return await UserDA.InsertExperienceDetails(expDetails);
         }

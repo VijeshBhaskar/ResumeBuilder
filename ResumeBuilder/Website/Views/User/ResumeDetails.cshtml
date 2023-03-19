@@ -62,15 +62,12 @@
         <div class="card card-default">
             <div class="card-body">
                 <form id="frmPersonalDetails">
-                    @*@using (Html.BeginForm("InsertPersonalDetails", "User", FormMethod.Post, new { id = "frmPersonalDetails" }))
-                        {*@
                     <input type="hidden" id="hdnInstallerDetailsID" />
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>First Name</label>
                                 @Html.TextBoxFor(model => model.UserDetailsModel.FirstName, new { @class = "form-control", @id = "txtFirstName" })
-                                @*<input type="text" class="form-control" id="txtFirstName" data-required="Name is required" />*@
                                 <span class="text-danger"></span>
                             </div>
                         </div>
@@ -128,81 +125,79 @@
                 <form id="frmExperienceDetails">
                     @*@using (Html.BeginForm("InsertExperienceDetails", "User", FormMethod.Post, new { id = "frmExperienceDetails" }))
                         {*@
-                    <input type="hidden" id="hdnProductID" />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Job Title</label>
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.JobTitle, new { @class = "form-control", @id = "txtExperienceDetailsID" })
-                                @*<input type="text" class="form-control" value="@ViewBag.VIN" id="txtWarrantyVIN" data-required="Vin is required" />*@
-                                <span class="text-danger"></span>
+                    @*<input type="hidden" id="hdnProductID" />*@
+                    @for (var i = 0; i < Model.ExperienceDetailsModel.Count(); i++)
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Job Title</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].JobTitle, new { @class = "form-control", @id = "txtExperienceDetailsID" + i })
+                                    @*<input type="text" class="form-control" value="@ViewBag.VIN" id="txtWarrantyVIN" data-required="Vin is required" />*@
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Employer</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].Employer, new { @class = "form-control", @id = "txtEmployer" + i })
+                                    @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].City, new { @class = "form-control", @id = "txtCity" + i })
+                                    @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Country</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].Country, new { @class = "form-control", @id = "txtCountry" + i })
+                                    @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Start date</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].StartDate, new
+                               {
+                                   @type = "date",
+                                   @class = "form-control datepicker",
+                                   @id = "dateExpStartDate" + i,
+                                   @Value = Model.ExperienceDetailsModel[i].StartDate.ToString("yyyy-MM-dd")
+                               })
+
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>End date</label>
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].EndDate, new
+                               {
+                                   @type = "date",
+                                   @class = "form-control datepicker",
+                                   @Id = "dateExpEndDate" + i,
+                                   @Value = Model.ExperienceDetailsModel[i].EndDate.ToString("yyyy-MM-dd")
+                               })
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="checkbox" name="@Model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany" id="checkBoxWorkingCompany@(i)"
+                                       @(Model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany ? "checked='checked'" : "")
+                                       onclick="onClickWorkingCompany(@i);"> I Currently work here
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Employer</label>
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.Employer, new { @class = "form-control", @id = "txtEmployer" })
-                                @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>City</label>
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.City, new { @class = "form-control", @id = "txtCity" })
-                                @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Country</label>
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.Country, new { @class = "form-control", @id = "txtCountry" })
-                                @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Start date</label>
-                                @*@Html.TextBoxFor(model => model.ExperienceDetailsModel.StartDate, new { @ty @class = "form-control", @id = "txtStartDate" })*@
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.StartDate, new
-                                {
-                                    @type = "date",
-                                    @class = "form-control datepicker"
-                               //,
-                               //@Value = Model.ExperienceDetailsModel.StartDate
-                           })
-                                @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>End date</label>
-                                @Html.TextBoxFor(model => model.ExperienceDetailsModel.EndDate, new
-                                {
-                                    @type = "date",
-                                    @class = "form-control datepicker"
-                              //,
-                              //@Value = Model.ExperienceDetailsModel.StartDate
-                                })
-                                @*@Html.TextBoxFor(model => model.ExperienceDetailsModel.EndDate, new { @class = "form-control", @id = "txtEndDate" })*@
-                                @*<input type="tel" class="form-control" value="@ViewBag.PhoneNumber" id="txtWarrantyPhoneNumber" data-required="Phone Number is required" />*@
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            @Html.CheckBoxFor(model => model.ExperienceDetailsModel.IsCurrentlyWorkingCompany) I Currently work here
-                            @*<input data-val="true"
-                                       data-val-required="The isActive field is required."
-                                       id="isActive"
-                                       name="isActive"
-                                       type="checkbox"
-                                       value="true" />
-                                I Currently work here
-                                <input name="isActive" type="hidden" value="false" />*@
-                        </div>
+                        <br>
+                    }
+                    <div class="col-4">
+                        <a class="e-icons e-plus" onclick="addEmployment()">Add one more employment</a>
                     </div>
                     <div class="row">
                         <div class="col-md-12 col-sm-2">
@@ -216,7 +211,7 @@
                     </div>
                     @*}*@
 
-                    </form>
+                </form>
             </div>
         </div>
     </div>

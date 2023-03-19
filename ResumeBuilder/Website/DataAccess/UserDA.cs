@@ -81,41 +81,47 @@ namespace Website.DataAccess
             }
             return response;
         }
-        public static async Task<UserSaveResponseDTO> InsertExperienceDetails(ExperienceDetailsDTO expDetails)
+        public static async Task<List<ExperienceDetailsDTO>> InsertExperienceDetails(List<ExperienceDetailsDTO> expDetails)
         {
-            UserSaveResponseDTO response = null; ;
 
             try
             {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@ExperienceDetailsID", expDetails.ExperienceDetailsID);
-                param.Add("@JobTitle", expDetails.JobTitle);
-                param.Add("@Employer", expDetails.Employer);
-                param.Add("@City", expDetails.City);
-                param.Add("@Country", expDetails.Country);
-                param.Add("@StartDate", expDetails.StartDate);
-                param.Add("@EndDate", expDetails.EndDate);
-                param.Add("@IsCurrentlyWorkingCompany", expDetails.IsCurrentlyWorkingCompany);
-                param.Add("@UserID", expDetails.UserID);
-                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
-
-                DataTable myDataTable = new DataTable("MyDataType");
-
-                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                foreach (ExperienceDetailsDTO item in expDetails)
                 {
-                    await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
-                    response = new UserSaveResponseDTO()
+                    DynamicParameters param = new DynamicParameters();
+                    param.Add("@ExperienceDetailsID", item.ExperienceDetailsID);
+                    param.Add("@JobTitle", item.JobTitle);
+                    param.Add("@Employer", item.Employer);
+                    param.Add("@City", item.City);
+                    param.Add("@Country", item.Country);
+                    param.Add("@StartDate", item.StartDate);
+                    param.Add("@EndDate", item.EndDate);
+                    param.Add("@IsCurrentlyWorkingCompany", item.IsCurrentlyWorkingCompany);
+                    param.Add("@UserID", item.UserID);
+                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+
+                    DataTable myDataTable = new DataTable("MyDataType");
+
+                    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                     {
-                        Message = param.Get<string>("@Message")
-                    };
+                        await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
+                        //response = new UserSaveResponseDTO()
+                        //{
+                        //    Message = param.Get<string>("@Message"),
+                        //    item.ExperienceDetailsID = param.Get<long>("@id")
+
+                        //};
+                        item.ExperienceDetailsID = param.Get<long>("@ExpID");
+                    }
                 }
+
             }
 
             catch (Exception ex)
             {
                 await Logger.Error(ex, "Error in UserDA.InsertPersonalDetails");
             }
-            return response;
+            return expDetails;
         }
 
         public static async Task<List<EducationDetailsDTO>> InsertEducationDetails(List<EducationDetailsDTO> eduDetails)
@@ -123,17 +129,17 @@ namespace Website.DataAccess
 
             try
             {
-               
-                    DataTable myDataTable = new DataTable("RB.EducationDataType");
-                    myDataTable.Columns.Add("EducationDetailID", typeof(Int64));
-                       myDataTable.Columns.Add("Education", typeof(string));
-                    myDataTable.Columns.Add("School", typeof(string));
-                    myDataTable.Columns.Add("StartDate", typeof(DateTime));
-                    myDataTable.Columns.Add("EndDate", typeof(DateTime));
-                    myDataTable.Columns.Add("City", typeof(string));
+
+                DataTable myDataTable = new DataTable("RB.EducationDataType");
+                myDataTable.Columns.Add("EducationDetailID", typeof(Int64));
+                myDataTable.Columns.Add("Education", typeof(string));
+                myDataTable.Columns.Add("School", typeof(string));
+                myDataTable.Columns.Add("StartDate", typeof(DateTime));
+                myDataTable.Columns.Add("EndDate", typeof(DateTime));
+                myDataTable.Columns.Add("City", typeof(string));
                 foreach (EducationDetailsDTO item in eduDetails)
                 {
-                    myDataTable.Rows.Add(item.EducationDetailID, item.Education, item.School,item.StartDate, item.EndDate,item.City);
+                    myDataTable.Rows.Add(item.EducationDetailID, item.Education, item.School, item.StartDate, item.EndDate, item.City);
                 }
                 //DynamicParameters param = new DynamicParameters();
                 //param.ad("@EducationData", myDataTable);
@@ -225,7 +231,9 @@ namespace Website.DataAccess
 
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
-                    result.ExperienceDetailsModel = await connection.QueryFirstOrDefaultAsync<ExperienceDetailsModel>("RB.GetExperienceDetails", param, commandType: CommandType.StoredProcedure);
+                    IEnumerable<ExperienceDetailsModel> expDetails = await connection.QueryAsync<ExperienceDetailsModel>("RB.GetExperienceDetails", param, commandType: CommandType.StoredProcedure);
+                    result.ExperienceDetailsModel = expDetails.ToList();
+                    //result.ExperienceDetailsModel = await connection.QueryFirstOrDefaultAsync<ExperienceDetailsModel>("RB.GetExperienceDetails", param, commandType: CommandType.StoredProcedure);
                 }
 
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
@@ -234,14 +242,14 @@ namespace Website.DataAccess
                     //List<ProfitMargin> profitMargin = results.ToList();
 
                     //result.EducationDetailsModel = await connection.QueryAsync<List<EducationDetailsModel>>("RB.GetEducationDetails", param, commandType: CommandType.StoredProcedure);
-                     IEnumerable<EducationDetailsModel> eduDetails = await connection.QueryAsync<EducationDetailsModel>("RB.GetEducationDetails", param, commandType: CommandType.StoredProcedure);
+                    IEnumerable<EducationDetailsModel> eduDetails = await connection.QueryAsync<EducationDetailsModel>("RB.GetEducationDetails", param, commandType: CommandType.StoredProcedure);
                     result.EducationDetailsModel = eduDetails.ToList();
                 }
 
             }
             catch (Exception ex)
             {
-                await Logger.Error(ex, "Error in UserDA.LoginUser");
+                await Logger.Error(ex, "Error in UserDA.GetResumeDetails");
             }
             return result;
         }
@@ -265,5 +273,6 @@ namespace Website.DataAccess
             }
 
             return warranty;
-        }    }
+        }
+    }
 }

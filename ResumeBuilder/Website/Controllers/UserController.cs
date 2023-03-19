@@ -117,13 +117,20 @@ namespace Website.Controllers
                     };
 
                 }
+                if(ResumeDetails.ExperienceDetailsModel == null || ResumeDetails.ExperienceDetailsModel.Count == 0)
+                {
+                    ResumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>
+                    {
+                        new ExperienceDetailsModel()
+                    };
+                }
             }
             else
             {
                 ResumeDetails = new ResumeDataModel()
                 {
                     UserDetailsModel = new UserDetailsModel(),
-                    ExperienceDetailsModel = new ExperienceDetailsModel(),
+                    ExperienceDetailsModel = new List<ExperienceDetailsModel>(),
                     EducationDetailsModel = new List<EducationDetailsModel>()
                 };
             }
@@ -183,7 +190,7 @@ namespace Website.Controllers
         }
         [HttpPost]
         [Route("InsertExperienceDetails")]
-        public async Task<JsonResult> InsertExperienceDetails(ResumeDataModel resumeDetails)
+        public async Task<ActionResult> InsertExperienceDetails(ResumeDataModel resumeDetails)
         {
 
             Response<long> response = new Response<long>
@@ -200,25 +207,47 @@ namespace Website.Controllers
                     return Json(response, JsonRequestBehavior.AllowGet);
                 }
 
-                ExperienceDetailsDTO exp = new ExperienceDetailsDTO()
+                List<ExperienceDetailsDTO> experience = new List<ExperienceDetailsDTO>();
+                foreach (ExperienceDetailsModel item in resumeDetails.ExperienceDetailsModel)
                 {
-                    ExperienceDetailsID = resumeDetails.ExperienceDetailsModel.ExperienceDetailsID,
-                    JobTitle = resumeDetails.ExperienceDetailsModel.JobTitle,
-                    Employer = resumeDetails.ExperienceDetailsModel.Employer,
-                    City = resumeDetails.ExperienceDetailsModel.City,
-                    Country = resumeDetails.ExperienceDetailsModel.Country,
-                    StartDate = resumeDetails.ExperienceDetailsModel.StartDate,
-                    EndDate = resumeDetails.ExperienceDetailsModel.EndDate,
-                    IsCurrentlyWorkingCompany = resumeDetails.ExperienceDetailsModel.IsCurrentlyWorkingCompany,
-                    UserID = UserSessionDetails.UserDetails.UserID
-                };
+                    ExperienceDetailsDTO exp = new ExperienceDetailsDTO()
+                    {
+                        ExperienceDetailsID = item.ExperienceDetailsID,
+                        JobTitle = item.JobTitle,
+                        Employer = item.Employer,
+                        City = item.City,
+                        Country = item.Country,
+                        StartDate = item.StartDate,
+                        EndDate = item.EndDate,
+                        IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                        UserID = UserSessionDetails.UserDetails.UserID
+                    };
+                    experience.Add(exp);
+                }
 
-                UserSaveResponseDTO res = await UserService.InsertExperienceDetails(exp);
+                var experienceDetailsModel = await UserService.InsertExperienceDetails(experience);
+                resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
+                foreach (ExperienceDetailsDTO item in  experienceDetailsModel)
+                {
+                    var expDetail = new ExperienceDetailsModel()
+                    {
+                        ExperienceDetailsID = item.ExperienceDetailsID,
+                        JobTitle = item.JobTitle,
+                        Employer = item.Employer,
+                        City = item.City,
+                        Country = item.Country,
+                        StartDate = item.StartDate,
+                        EndDate = item.EndDate,
+                        IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                    };
+
+                    resumeDetails.ExperienceDetailsModel.Add(expDetail);
+                }
                 //response.Data = res.UserID;
                 //response.Status = res.UserID > 0 ? ResponseCode.Success : ResponseCode.Failed;
-                response.Message = res.Message;
 
-                return Json(response, JsonRequestBehavior.AllowGet);
+                //return Json(response, JsonRequestBehavior.AllowGet);
+                return View("ResumeDetails", resumeDetails);
             }
             catch (Exception ex)
             {
@@ -280,6 +309,30 @@ namespace Website.Controllers
                     resumeDetails.EducationDetailsModel.Add(eduDetails);
                 }
 
+                return Json(resumeDetails, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+
+                await Logger.Error(ex, "Error in UserController.InsertPersonalDetails");
+                return Json(response, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        [Route("AddNewExperience")]
+        public async Task<JsonResult> AddNewExperience(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                resumeDetails.ExperienceDetailsModel.Add(new ExperienceDetailsModel());
                 return Json(resumeDetails, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

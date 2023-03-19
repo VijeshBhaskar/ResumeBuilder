@@ -252,6 +252,37 @@ function TabClick(tab) {
         $("#dvEducation").show();
     }
 }
+function onClickWorkingCompany(i) {
+    debugger
+    if ($("#checkBoxWorkingCompany" + i).prop('checked') == true) {
+        $("#dateExpEndDate" + i).prop('disabled', true);
+    }
+    else {
+        $("#dateExpEndDate" + i).prop('disabled', false);
+    }
+}
+function addEmployment() {
+    debugger
+    var valdata = $("#frmExperienceDetails").serialize();
+    $.ajax({
+        url: "/User/AddNewExperience",
+        type: "POST",
+        dataType: 'json',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        success: function (data, textStatus, XmlHttpRequest) {
+            debugger;
+            $("#loader").hide();
+            if (XmlHttpRequest.status === 200) {
+                TabClick('tabExperience');
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loader").hide();
+           /* alert(errorThrown);*/
+        }
+    });
+}
 function formatDate(date) {
     var date = new Date(parseInt(date.substr(6)));
     var month = date.getMonth() + 1;
