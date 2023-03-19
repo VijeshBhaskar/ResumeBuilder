@@ -1,0 +1,4 @@
+﻿USE [db_XPEL]
+GO
+CREATE SCHEMA [XPEL]
+GO

@@ -1,0 +1,22 @@
+﻿@*@model RB.Website.Model.ViewResumeModel*@
+@{
+    ViewBag.Title = "ViewResume";
+}
+
+@*<h2>ViewResume</h2>*@
+<button type="button" style="background:#f5af05;" class="btn btn-default" onclick="printResume();">Print</button>
+@Html.Raw(@ViewBag.TemplateHtml)
+
+<script type="text/javascript">
+    function printResume() {
+        debugger
+        //window.print();
+        //return false;
+        $("#printArea").print({
+            globalStyles: true,
+            mediaPrint: false,
+            iframe: false
+        });
+    }
+    
+</script>

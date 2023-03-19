@@ -1,0 +1,76 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RB.Website", "RB.Website", "{E63E5F8E-6FD0-42E1-B442-5F00E9BF6EC3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RB.Website.Model", "RB.Website.Model", "{8E2CF82E-80C5-4B06-9FBE-B2A662601A83}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RB.Website.DTO", "RB.Website.DTO", "{9B72C3E5-7D62-47E3-A949-D9DE57B33021}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RB.Database.Scripts", "RB.Database.Scripts", "{603C2FC9-882F-48F3-AD26-40E36EC13C03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tables", "Tables", "{370ED763-F476-408D-9D5B-CEEAFC70C3D7}"
+	ProjectSection(SolutionItems) = preProject
+		01 CREATE TABLE [XPEL].[InstallerDetails].sql = 01 CREATE TABLE [XPEL].[InstallerDetails].sql
+		02 CREATE TABLE [XPEL].[ProductDetails].sql = 02 CREATE TABLE [XPEL].[ProductDetails].sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{06185867-09A5-4FAA-B267-4683E93FD071}"
+	ProjectSection(SolutionItems) = preProject
+		XPEL.Database.Scripts\Scripts\01 CREATE DATABASE db_XPEL.sql = XPEL.Database.Scripts\Scripts\01 CREATE DATABASE db_XPEL.sql
+		XPEL.Database.Scripts\Scripts\02 CREATE SCHEMA [XPEL].sql = XPEL.Database.Scripts\Scripts\02 CREATE SCHEMA [XPEL].sql
+		XPEL.Database.Scripts\Scripts\03 CREATE PROCEDURE [XPEL].[DeleteInstallerDetails].sql = XPEL.Database.Scripts\Scripts\03 CREATE PROCEDURE [XPEL].[DeleteInstallerDetails].sql
+		XPEL.Database.Scripts\Scripts\04 CREATE PROCEDURE [XPEL].[DeleteProductDetails].sql = XPEL.Database.Scripts\Scripts\04 CREATE PROCEDURE [XPEL].[DeleteProductDetails].sql
+		XPEL.Database.Scripts\Scripts\05 CREATE PROCEDURE [XPEL].[InsertUpdateInstallerDetails].sql = XPEL.Database.Scripts\Scripts\05 CREATE PROCEDURE [XPEL].[InsertUpdateInstallerDetails].sql
+		XPEL.Database.Scripts\Scripts\06 CREATE PROCEDURE [XPEL].[InsertUpdateProductDetails].sql = XPEL.Database.Scripts\Scripts\06 CREATE PROCEDURE [XPEL].[InsertUpdateProductDetails].sql
+		XPEL.Database.Scripts\Scripts\07 CREATE PROCEDURE [XPEL].[SelectInstallerDetails].sql = XPEL.Database.Scripts\Scripts\07 CREATE PROCEDURE [XPEL].[SelectInstallerDetails].sql
+		XPEL.Database.Scripts\Scripts\08 CREATE PROCEDURE [XPEL].[SelectProductDetails].sql = XPEL.Database.Scripts\Scripts\08 CREATE PROCEDURE [XPEL].[SelectProductDetails].sql
+		XPEL.Database.Scripts\Scripts\09 CREATE PROCEDURE [XPEL].[InsertUserDetails].sql = XPEL.Database.Scripts\Scripts\09 CREATE PROCEDURE [XPEL].[InsertUserDetails].sql
+		XPEL.Database.Scripts\Scripts\10 CREATE PROCEDURE [XPEL].[SelectWarrantyByRoleID].sql = XPEL.Database.Scripts\Scripts\10 CREATE PROCEDURE [XPEL].[SelectWarrantyByRoleID].sql
+		XPEL.Database.Scripts\Scripts\11 CREATE PROCEDURE [XPEL].[CheckWarranty].sql = XPEL.Database.Scripts\Scripts\11 CREATE PROCEDURE [XPEL].[CheckWarranty].sql
+		12 CREATE PROCEDURE [XPEL].[SelectInstallerDetailsByName].sql = 12 CREATE PROCEDURE [XPEL].[SelectInstallerDetailsByName].sql
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Website\Website.csproj", "{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RB.Website.DTO", "RB.Website.DTO\RB.Website.DTO.csproj", "{2E88B961-5CC3-4C43-ADB5-FB824BA05369}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RB.Website.Model", "RB.Website.Model\RB.Website.Model.csproj", "{D5054229-293C-4178-90E5-312E4E0D0E63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E88B961-5CC3-4C43-ADB5-FB824BA05369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E88B961-5CC3-4C43-ADB5-FB824BA05369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E88B961-5CC3-4C43-ADB5-FB824BA05369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E88B961-5CC3-4C43-ADB5-FB824BA05369}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5054229-293C-4178-90E5-312E4E0D0E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5054229-293C-4178-90E5-312E4E0D0E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5054229-293C-4178-90E5-312E4E0D0E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5054229-293C-4178-90E5-312E4E0D0E63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8E2CF82E-80C5-4B06-9FBE-B2A662601A83} = {E63E5F8E-6FD0-42E1-B442-5F00E9BF6EC3}
+		{9B72C3E5-7D62-47E3-A949-D9DE57B33021} = {E63E5F8E-6FD0-42E1-B442-5F00E9BF6EC3}
+		{370ED763-F476-408D-9D5B-CEEAFC70C3D7} = {603C2FC9-882F-48F3-AD26-40E36EC13C03}
+		{06185867-09A5-4FAA-B267-4683E93FD071} = {603C2FC9-882F-48F3-AD26-40E36EC13C03}
+		{2AA6954A-BBCF-4E6B-B4EB-3B389C65B22D} = {E63E5F8E-6FD0-42E1-B442-5F00E9BF6EC3}
+		{2E88B961-5CC3-4C43-ADB5-FB824BA05369} = {9B72C3E5-7D62-47E3-A949-D9DE57B33021}
+		{D5054229-293C-4178-90E5-312E4E0D0E63} = {8E2CF82E-80C5-4B06-9FBE-B2A662601A83}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {136B5381-A4C8-4EB4-B977-35D889AD40DE}
+	EndGlobalSection
+EndGlobal
