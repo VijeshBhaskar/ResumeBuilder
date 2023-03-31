@@ -3,9 +3,9 @@ namespace RB.Website.Model
 {
     public class UserDetailsModel
     {
+        public long PersonalDetailD { get; set; }
         [Required(ErrorMessage = "FirstName is required")]
         public string FirstName { get; set; }
-        [Required(ErrorMessage = "LastName is required")]
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
@@ -16,6 +16,8 @@ namespace RB.Website.Model
 
         [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
+        public string Summary { get; set; }
+        public string JobTitle { get; set; }
         public long UserID { get; set; }
     }
 }

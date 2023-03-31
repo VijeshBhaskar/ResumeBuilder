@@ -1,8 +1,8 @@
 ﻿namespace RB.Website.DTO
 {
-    public class UserSaveResponseDTO
+    public class UserCreationResponseDTO
     {
-        public long UserID { get; set; }
         public string Message { get; set; }
+        public bool IsSuccess { get; set; }
     }
 }

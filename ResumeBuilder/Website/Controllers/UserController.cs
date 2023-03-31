@@ -15,9 +15,10 @@ namespace Website.Controllers
     public class UserController : Controller
     {
         // GET: User
-        public ActionResult Login(string message = "")
+        public ActionResult Login(string message = "", string RegMsg = "")
         {
             ViewBag.Message = message;
+            ViewBag.RegMsg = RegMsg;
             return View();
         }
 
@@ -32,8 +33,8 @@ namespace Website.Controllers
                     Email = modal.Email,
                     Password = modal.Password
                 };
-                await UserService.CreateUser(user);
-                return RedirectToAction("Login", "User");
+                var response = await UserService.CreateUser(user);
+                return RedirectToAction("Login", "User", new { RegMsg = response.Message });
             }
             catch (Exception ex)
             {
@@ -102,6 +103,7 @@ namespace Website.Controllers
                 return RedirectToAction("Login", "User", new { message = "error occurred" });
             }
         }
+        [OutputCache(Duration = 0)]
         public async Task<ActionResult> ResumeDetails(int TemplateID = 0)
         {
             ResumeDataModel ResumeDetails = null;
@@ -109,19 +111,40 @@ namespace Website.Controllers
             if (UserSessionDetails.UserDetails != null && UserSessionDetails.UserDetails.UserID > 0)
             {
                 ResumeDetails = await UserService.GetResumeDetails(UserSessionDetails.UserDetails.UserID);
-                if (ResumeDetails.EducationDetailsModel == null)
+                if (ResumeDetails.EducationDetailsModel == null || ResumeDetails.EducationDetailsModel.Count == 0)
                 {
                     ResumeDetails.EducationDetailsModel = new List<EducationDetailsModel>()
                     {
-                        new EducationDetailsModel()
+                        new EducationDetailsModel(){IsActive = true}
                     };
 
                 }
-                if(ResumeDetails.ExperienceDetailsModel == null || ResumeDetails.ExperienceDetailsModel.Count == 0)
+                if (ResumeDetails.ExperienceDetailsModel == null || ResumeDetails.ExperienceDetailsModel.Count == 0)
                 {
                     ResumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>
                     {
-                        new ExperienceDetailsModel()
+                        new ExperienceDetailsModel(){IsActive = true}
+                    };
+                }
+                if (ResumeDetails.SkillDetailsModel == null || ResumeDetails.SkillDetailsModel.Count == 0)
+                {
+                    ResumeDetails.SkillDetailsModel = new List<SkillDetailsModel>
+                    {
+                        new SkillDetailsModel(){IsActive = true}
+                    };
+                }
+                if (ResumeDetails.LanguageDetailsModel == null || ResumeDetails.LanguageDetailsModel.Count == 0)
+                {
+                    ResumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>
+                    {
+                        new LanguageDetailsModel(){IsActive = true}
+                    };
+                }
+                if (ResumeDetails.HobbyDetailsModel == null || ResumeDetails.HobbyDetailsModel.Count == 0)
+                {
+                    ResumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>
+                    {
+                        new HobbyDetailsModel(){IsActive = true}
                     };
                 }
             }
@@ -131,7 +154,9 @@ namespace Website.Controllers
                 {
                     UserDetailsModel = new UserDetailsModel(),
                     ExperienceDetailsModel = new List<ExperienceDetailsModel>(),
-                    EducationDetailsModel = new List<EducationDetailsModel>()
+                    EducationDetailsModel = new List<EducationDetailsModel>(),
+                    LanguageDetailsModel = new List<LanguageDetailsModel>(),
+                    HobbyDetailsModel = new List<HobbyDetailsModel>()
                 };
             }
 
@@ -145,7 +170,7 @@ namespace Website.Controllers
 
         [HttpPost]
         [Route("InsertPersonalDetails")]
-        public async Task<JsonResult> InsertPersonalDetails(ResumeDataModel resumeDetails)
+        public async Task<ActionResult> InsertPersonalDetails(ResumeDataModel resumeDetails)
         {
 
             Response<long> response = new Response<long>
@@ -155,29 +180,23 @@ namespace Website.Controllers
 
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    response.Status = ResponseCode.ModelIsNotValid;
-                    response.Message = await CustomHelper.GetModelStateErrors(ModelState);
-                    return Json(response, JsonRequestBehavior.AllowGet);
-                }
-
                 UserDetailsDTO user = new UserDetailsDTO()
                 {
+                    PersonalDetailD = resumeDetails.UserDetailsModel.PersonalDetailD,
                     FirstName = resumeDetails.UserDetailsModel.FirstName,
                     LastName = resumeDetails.UserDetailsModel.LastName,
                     Email = resumeDetails.UserDetailsModel.Email,
                     PhoneNumber = resumeDetails.UserDetailsModel.PhoneNumber,
                     Address = resumeDetails.UserDetailsModel.Address,
-                    UserID = UserSessionDetails.UserDetails.UserID
+                    UserID = UserSessionDetails.UserDetails.UserID,
+                    Summary = resumeDetails.UserDetailsModel.Summary,
+                    JobTitle = resumeDetails.UserDetailsModel.JobTitle
                 };
 
-                UserSaveResponseDTO res = await UserService.InsertPersonalDetails(user);
-                //response.Data = res.UserID;
-                //response.Status = res.UserID > 0 ? ResponseCode.Success : ResponseCode.Failed;
-                response.Message = res.Message;
-
-                return Json(response, JsonRequestBehavior.AllowGet);
+                UserDetailsDTO res = await UserService.InsertPersonalDetails(user);
+                resumeDetails.UserDetailsModel.PersonalDetailD = res.PersonalDetailD;
+                //return View("ResumeDetails", resumeDetails);
+                return PartialView(@"~/Views/User/PersonalPartialView.cshtml", resumeDetails);
             }
             catch (Exception ex)
             {
@@ -185,7 +204,7 @@ namespace Website.Controllers
                 response.Message = ex.Message;
 
                 await Logger.Error(ex, "Error in UserController.InsertPersonalDetails");
-                return Json(response, JsonRequestBehavior.AllowGet);
+                return PartialView(@"~/Views/User/PersonalPartialView.cshtml", resumeDetails);
             }
         }
         [HttpPost]
@@ -220,6 +239,7 @@ namespace Website.Controllers
                         StartDate = item.StartDate,
                         EndDate = item.EndDate,
                         IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                        IsActive = item.IsActive,
                         UserID = UserSessionDetails.UserDetails.UserID
                     };
                     experience.Add(exp);
@@ -227,27 +247,28 @@ namespace Website.Controllers
 
                 var experienceDetailsModel = await UserService.InsertExperienceDetails(experience);
                 resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
-                foreach (ExperienceDetailsDTO item in  experienceDetailsModel)
+                foreach (ExperienceDetailsDTO item in experienceDetailsModel)
                 {
-                    var expDetail = new ExperienceDetailsModel()
+                    if (item.IsActive)
                     {
-                        ExperienceDetailsID = item.ExperienceDetailsID,
-                        JobTitle = item.JobTitle,
-                        Employer = item.Employer,
-                        City = item.City,
-                        Country = item.Country,
-                        StartDate = item.StartDate,
-                        EndDate = item.EndDate,
-                        IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
-                    };
+                        var expDetail = new ExperienceDetailsModel()
+                        {
+                            ExperienceDetailsID = item.ExperienceDetailsID,
+                            JobTitle = item.JobTitle,
+                            Employer = item.Employer,
+                            City = item.City,
+                            Country = item.Country,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                            IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                            IsActive = item.IsActive
+                        };
 
-                    resumeDetails.ExperienceDetailsModel.Add(expDetail);
+                        resumeDetails.ExperienceDetailsModel.Add(expDetail);
+                    }
                 }
-                //response.Data = res.UserID;
-                //response.Status = res.UserID > 0 ? ResponseCode.Success : ResponseCode.Failed;
 
-                //return Json(response, JsonRequestBehavior.AllowGet);
-                return View("ResumeDetails", resumeDetails);
+                return PartialView(@"~/Views/User/ExperiencePartialView.cshtml", resumeDetails);
             }
             catch (Exception ex)
             {
@@ -255,12 +276,12 @@ namespace Website.Controllers
                 response.Message = ex.Message;
 
                 await Logger.Error(ex, "Error in UserController.InsertPersonalDetails");
-                return Json(response, JsonRequestBehavior.AllowGet);
+                return PartialView(@"~/Views/User/ExperiencePartialView.cshtml", resumeDetails);
             }
         }
         [HttpPost]
         [Route("InsertEducationDetails")]
-        public async Task<JsonResult> InsertEducationDetails(ResumeDataModel resumeDetails)
+        public async Task<ActionResult> InsertEducationDetails(ResumeDataModel resumeDetails)
         {
 
             Response<long> response = new Response<long>
@@ -289,7 +310,8 @@ namespace Website.Controllers
                         StartDate = item.StartDate,
                         EndDate = item.EndDate,
                         City = item.City,
-                        UserID = UserSessionDetails.UserDetails.UserID
+                        UserID = UserSessionDetails.UserDetails.UserID,
+                        IsActive = item.IsActive
                     };
                     education.Add(edu);
                 }
@@ -300,29 +322,30 @@ namespace Website.Controllers
                 {
                     EducationDetailsModel eduDetails = new EducationDetailsModel()
                     {
+                        EducationDetailID = item.EducationDetailID,
                         Education = item.Education,
                         School = item.School,
                         StartDate = item.StartDate,
                         EndDate = item.EndDate,
-                        City = item.City
+                        City = item.City,
+                        IsActive = item.IsActive
                     };
                     resumeDetails.EducationDetailsModel.Add(eduDetails);
                 }
 
-                return Json(resumeDetails, JsonRequestBehavior.AllowGet);
+                return PartialView(@"~/Views/User/EducationPartialView.cshtml", resumeDetails);
             }
             catch (Exception ex)
             {
                 response.Status = ResponseCode.Error;
                 response.Message = ex.Message;
-
-                await Logger.Error(ex, "Error in UserController.InsertPersonalDetails");
-                return Json(response, JsonRequestBehavior.AllowGet);
+                await Logger.Error(ex, "Error in UserController.InsertEducationDetails");
+                return PartialView(@"~/Views/User/EducationPartialView.cshtml", resumeDetails);
             }
         }
         [HttpPost]
-        [Route("AddNewExperience")]
-        public async Task<JsonResult> AddNewExperience(ResumeDataModel resumeDetails)
+        [Route("InsertSkillDetails")]
+        public async Task<ActionResult> InsertSkillDetails(ResumeDataModel resumeDetails)
         {
 
             Response<long> response = new Response<long>
@@ -332,23 +355,438 @@ namespace Website.Controllers
 
             try
             {
-                resumeDetails.ExperienceDetailsModel.Add(new ExperienceDetailsModel());
-                return Json(resumeDetails, JsonRequestBehavior.AllowGet);
+                if (!ModelState.IsValid)
+                {
+                    response.Status = ResponseCode.ModelIsNotValid;
+                    response.Message = await CustomHelper.GetModelStateErrors(ModelState);
+                    return
+                        Json(response, JsonRequestBehavior.AllowGet);
+                }
+
+                List<SkillDetailsDTO> skills = new List<SkillDetailsDTO>();
+                foreach (SkillDetailsModel item in resumeDetails.SkillDetailsModel)
+                {
+                    SkillDetailsDTO skill = new SkillDetailsDTO()
+                    {
+                        SkillDetailID = item.SkillDetailID,
+                        SkillName = item.SkillName,
+                        SkillRating = item.SkillRating,
+                        UserID = UserSessionDetails.UserDetails.UserID,
+                        IsActive = item.IsActive
+                    };
+                    skills.Add(skill);
+                }
+
+                var result = await UserService.InsertSkillDetails(skills);
+                resumeDetails.SkillDetailsModel = new List<SkillDetailsModel>();
+                foreach (var item in result)
+                {
+                    SkillDetailsModel sklDetails = new SkillDetailsModel()
+                    {
+                        SkillDetailID = item.SkillDetailID,
+                        SkillName = item.SkillName,
+                        SkillRating = item.SkillRating,
+                        IsActive = item.IsActive
+                    };
+                    resumeDetails.SkillDetailsModel.Add(sklDetails);
+                }
+
+                return PartialView(@"~/Views/User/SkillsPartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.InsertSkillDetails");
+                return PartialView(@"~/Views/User/SkillsPartialView.cshtml", resumeDetails);
+            }
+        }
+        [HttpPost]
+        [Route("InsertHobbyDetails")]
+        public async Task<ActionResult> InsertHobbyDetails(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    response.Status = ResponseCode.ModelIsNotValid;
+                    response.Message = await CustomHelper.GetModelStateErrors(ModelState);
+                    return
+                        Json(response, JsonRequestBehavior.AllowGet);
+                }
+
+                List<HobbyDetailsDTO> hobby = new List<HobbyDetailsDTO>();
+                foreach (HobbyDetailsModel item in resumeDetails.HobbyDetailsModel)
+                {
+                    HobbyDetailsDTO hob = new HobbyDetailsDTO()
+                    {
+                        HobbyDetailsID = item.HobbyDetailsID,
+                        HobbyName = item.HobbyName,
+                        IsActive = item.IsActive,
+                        UserID = UserSessionDetails.UserDetails.UserID
+                    };
+                    hobby.Add(hob);
+                }
+
+                var result = await UserService.InsertHobbyDetails(hobby);
+                resumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>();
+                foreach (var item in result)
+                {
+                    HobbyDetailsModel hbyDetails = new HobbyDetailsModel()
+                    {
+                        HobbyDetailsID = item.HobbyDetailsID,
+                        HobbyName = item.HobbyName,
+                        IsActive = item.IsActive
+                    };
+                    resumeDetails.HobbyDetailsModel.Add(hbyDetails);
+                }
+
+                return PartialView(@"~/Views/User/HobbyPartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.InsertHobbyDetails");
+                return PartialView(@"~/Views/User/HobbyPartialView.cshtml", resumeDetails);
+            }
+        }
+        [HttpPost]
+        [Route("InsertLanguageDetails")]
+        public async Task<ActionResult> InsertLanguageDetails(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    response.Status = ResponseCode.ModelIsNotValid;
+                    response.Message = await CustomHelper.GetModelStateErrors(ModelState);
+                    return
+                        Json(response, JsonRequestBehavior.AllowGet);
+                }
+
+                List<LanguageDetailsDTO> language = new List<LanguageDetailsDTO>();
+                foreach (LanguageDetailsModel item in resumeDetails.LanguageDetailsModel)
+                {
+                    LanguageDetailsDTO lang = new LanguageDetailsDTO()
+                    {
+                        LanguageDetailsID = item.LanguageDetailsID,
+                        LanguageName = item.LanguageName,
+                        UserID = UserSessionDetails.UserDetails.UserID,
+                        IsActive = item.IsActive
+                    };
+                    language.Add(lang);
+                }
+
+                var result = await UserService.InsertLanguageDetails(language);
+                resumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>();
+                foreach (var item in result)
+                {
+                    LanguageDetailsModel lngDetails = new LanguageDetailsModel()
+                    {
+                        LanguageDetailsID = item.LanguageDetailsID,
+                        LanguageName = item.LanguageName,
+                        IsActive = item.IsActive
+                    };
+                    resumeDetails.LanguageDetailsModel.Add(lngDetails);
+                }
+
+                return PartialView(@"~/Views/User/LanguagePartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.InsertLanguageDetails");
+                return PartialView(@"~/Views/User/LanguagePartialView.cshtml", resumeDetails);
+            }
+        }
+        [HttpPost]
+        [Route("AddNewExperience")]
+        [OutputCache(Duration = 0)]
+        public async Task<PartialViewResult> AddNewExperience(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                ModelState.Clear();
+                //to remove unwanted item from list
+                for (int i = 0; i < resumeDetails.ExperienceDetailsModel.Count; i++)
+                {
+                    if (!resumeDetails.ExperienceDetailsModel[i].IsActive)
+                    {
+                        resumeDetails.ExperienceDetailsModel.RemoveAt(i);
+                    }
+                }
+                //
+                resumeDetails.ExperienceDetailsModel.Add(new ExperienceDetailsModel()
+                {
+                    IsActive = true
+                });
+                if (resumeDetails.EducationDetailsModel == null || resumeDetails.EducationDetailsModel.Count == 0)
+                {
+                    resumeDetails.EducationDetailsModel = new List<EducationDetailsModel>();
+                }
+                if (resumeDetails.SkillDetailsModel == null || resumeDetails.SkillDetailsModel.Count == 0)
+                {
+                    resumeDetails.SkillDetailsModel = new List<SkillDetailsModel>();
+                }
+                if (resumeDetails.HobbyDetailsModel == null || resumeDetails.HobbyDetailsModel.Count == 0)
+                {
+                    resumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>();
+                }
+                if (resumeDetails.LanguageDetailsModel == null || resumeDetails.LanguageDetailsModel.Count == 0)
+                {
+                    resumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>();
+                }
+                return PartialView(@"~/Views/User/ExperiencePartialView.cshtml", resumeDetails);
             }
             catch (Exception ex)
             {
                 response.Status = ResponseCode.Error;
                 response.Message = ex.Message;
 
-                await Logger.Error(ex, "Error in UserController.InsertPersonalDetails");
-                return Json(response, JsonRequestBehavior.AllowGet);
+                await Logger.Error(ex, "Error in UserController.AddNewExperience");
+                return PartialView(@"~/Views/User/ExperiencePartialView.cshtml", resumeDetails);
+            }
+        }
+        [Route("AddNewEducation")]
+        [OutputCache(Duration = 0)]
+        public async Task<PartialViewResult> AddNewEducation(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                ModelState.Clear();
+
+                //to remove unwanted item from list
+                for (int i = 0; i < resumeDetails.EducationDetailsModel.Count; i++)
+                {
+                    if (!resumeDetails.EducationDetailsModel[i].IsActive)
+                    {
+                        resumeDetails.EducationDetailsModel.RemoveAt(i);
+                    }
+                }
+                //
+
+                resumeDetails.EducationDetailsModel.Add(new EducationDetailsModel
+                {
+                    IsActive = true
+                });
+                if (resumeDetails.ExperienceDetailsModel == null || resumeDetails.ExperienceDetailsModel.Count == 0)
+                {
+                    resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
+                }
+                if (resumeDetails.SkillDetailsModel == null || resumeDetails.SkillDetailsModel.Count == 0)
+                {
+                    resumeDetails.SkillDetailsModel = new List<SkillDetailsModel>();
+                }
+                if (resumeDetails.HobbyDetailsModel == null || resumeDetails.HobbyDetailsModel.Count == 0)
+                {
+                    resumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>();
+                }
+                if (resumeDetails.LanguageDetailsModel == null || resumeDetails.LanguageDetailsModel.Count == 0)
+                {
+                    resumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>();
+                }
+                return PartialView(@"~/Views/User/EducationPartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.AddNewEducation");
+                return PartialView(@"~/Views/User/EducationPartialView.cshtml", resumeDetails);
+            }
+        }
+        [Route("AddNewSkill")]
+        [OutputCache(Duration = 0)]
+        public async Task<PartialViewResult> AddNewSkill(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                ModelState.Clear();
+
+                //to remove unwanted item from list
+                for (int i = 0; i < resumeDetails.SkillDetailsModel.Count; i++)
+                {
+                    if (!resumeDetails.SkillDetailsModel[i].IsActive)
+                    {
+                        resumeDetails.SkillDetailsModel.RemoveAt(i);
+                    }
+                }
+                //
+                resumeDetails.SkillDetailsModel.Add(new SkillDetailsModel
+                {
+                    IsActive = true
+                });
+                if (resumeDetails.ExperienceDetailsModel == null || resumeDetails.ExperienceDetailsModel.Count == 0)
+                {
+                    resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
+                }
+                if (resumeDetails.EducationDetailsModel == null || resumeDetails.EducationDetailsModel.Count == 0)
+                {
+                    resumeDetails.EducationDetailsModel = new List<EducationDetailsModel>();
+                }
+                if (resumeDetails.HobbyDetailsModel == null || resumeDetails.HobbyDetailsModel.Count == 0)
+                {
+                    resumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>();
+                }
+                if (resumeDetails.LanguageDetailsModel == null || resumeDetails.LanguageDetailsModel.Count == 0)
+                {
+                    resumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>();
+                }
+                return PartialView(@"~/Views/User/SkillsPartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.AddNewSkill");
+                return PartialView(@"~/Views/User/SkillsPartialView.cshtml", resumeDetails);
+            }
+        }
+        [Route("AddNewHobby")]
+        [OutputCache(Duration = 0)]
+        public async Task<PartialViewResult> AddNewHobby(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                ModelState.Clear();
+
+                //to remove unwanted item from list
+                for (int i = 0; i < resumeDetails.HobbyDetailsModel.Count; i++)
+                {
+                    if (!resumeDetails.HobbyDetailsModel[i].IsActive)
+                    {
+                        resumeDetails.HobbyDetailsModel.RemoveAt(i);
+                    }
+                }
+                //
+
+                resumeDetails.HobbyDetailsModel.Add(new HobbyDetailsModel
+                {
+                    IsActive = true
+                });
+                if (resumeDetails.ExperienceDetailsModel == null || resumeDetails.ExperienceDetailsModel.Count == 0)
+                {
+                    resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
+                }
+                if (resumeDetails.EducationDetailsModel == null || resumeDetails.EducationDetailsModel.Count == 0)
+                {
+                    resumeDetails.EducationDetailsModel = new List<EducationDetailsModel>();
+                }
+                if (resumeDetails.SkillDetailsModel == null || resumeDetails.SkillDetailsModel.Count == 0)
+                {
+                    resumeDetails.SkillDetailsModel = new List<SkillDetailsModel>();
+                }
+                if (resumeDetails.LanguageDetailsModel == null || resumeDetails.LanguageDetailsModel.Count == 0)
+                {
+                    resumeDetails.LanguageDetailsModel = new List<LanguageDetailsModel>();
+                }
+                return PartialView(@"~/Views/User/HobbyPartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.AddNewHobby");
+                return PartialView(@"~/Views/User/HobbyPartialView.cshtml", resumeDetails);
+            }
+        }
+        [Route("AddNewLanguage")]
+        [OutputCache(Duration = 0)]
+        public async Task<PartialViewResult> AddNewLanguage(ResumeDataModel resumeDetails)
+        {
+
+            Response<long> response = new Response<long>
+            {
+                Data = -1
+            };
+
+            try
+            {
+                ModelState.Clear();
+
+                //to remove unwanted item from list
+                for (int i = 0; i < resumeDetails.LanguageDetailsModel.Count; i++)
+                {
+                    if (!resumeDetails.LanguageDetailsModel[i].IsActive)
+                    {
+                        resumeDetails.LanguageDetailsModel.RemoveAt(i);
+                    }
+                }
+                //
+
+                resumeDetails.LanguageDetailsModel.Add(new LanguageDetailsModel
+                {
+                    IsActive = true
+                });
+                if (resumeDetails.ExperienceDetailsModel == null || resumeDetails.ExperienceDetailsModel.Count == 0)
+                {
+                    resumeDetails.ExperienceDetailsModel = new List<ExperienceDetailsModel>();
+                }
+                if (resumeDetails.EducationDetailsModel == null || resumeDetails.EducationDetailsModel.Count == 0)
+                {
+                    resumeDetails.EducationDetailsModel = new List<EducationDetailsModel>();
+                }
+                if (resumeDetails.SkillDetailsModel == null || resumeDetails.SkillDetailsModel.Count == 0)
+                {
+                    resumeDetails.SkillDetailsModel = new List<SkillDetailsModel>();
+                }
+                if (resumeDetails.HobbyDetailsModel == null || resumeDetails.HobbyDetailsModel.Count == 0)
+                {
+                    resumeDetails.HobbyDetailsModel = new List<HobbyDetailsModel>();
+                }
+                return PartialView(@"~/Views/User/LanguagePartialView.cshtml", resumeDetails);
+            }
+            catch (Exception ex)
+            {
+                response.Status = ResponseCode.Error;
+                response.Message = ex.Message;
+                await Logger.Error(ex, "Error in UserController.AddNewLanguage");
+                return PartialView(@"~/Views/User/LanguagePartialView.cshtml", resumeDetails);
             }
         }
         [HttpPost]
         [Route("ViewResume")]
         public async Task<ActionResult> ViewResume()
         {
-            string response = await UserService.GetTemplatesDetailsByID();
+            string response = await UserService.GetTemplatesDetailsByID(UserSessionDetails.UserDetails.UserID);
             ViewResumeModel veiwResume = new ViewResumeModel
             {
                 TemplateHtml = response

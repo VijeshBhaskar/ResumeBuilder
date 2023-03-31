@@ -1,0 +1,129 @@
+﻿@model RB.Website.Model.ResumeDataModel
+
+@{
+    ViewBag.Title = "ExperiencePartialView";
+}
+
+<div class="card card-default" id="dvExperience">
+    <div class="card-body">
+        <form id="frmExperienceDetails">
+            <div id="exprnceMainDiv">
+                @for (var i = 0; i < Model.ExperienceDetailsModel.FindAll(x => x.IsActive).Count(); i++)
+                {
+                    <br />
+                    <div class="row clsExp" id="expTopDiv@(i)">
+                        @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].ExperienceDetailsID, new { @class = "", @style = "display:none" })
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Job Title</label>
+                                @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].JobTitle, new { @class = "form-control clsJobTitle", @id = "txtJobTitle" + i })
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Employer</label>
+                                @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].Employer, new { @class = "form-control clsEmployer", @id = "txtEmployer" + i })
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>City</label>
+                                @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].City, new { @class = "form-control clsCity", @id = "txtCity" + i })
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Country</label>
+                                @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].Country, new { @class = "form-control clsCountry", @id = "txtCountry" + i })
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Start date</label>
+                                @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].StartDate, new
+                           {
+                               @type = "date",
+                               @class = "form-control datepicker clsStartDate",
+                               @id = "dateExpStartDate" + i,
+                               @Value = Model.ExperienceDetailsModel[i].StartDate != null ? ((DateTime)Model.ExperienceDetailsModel[i].StartDate).ToString("yyyy-MM-dd") : null
+                           })
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>End date</label>
+
+                                @if (!Convert.ToBoolean(Model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany))
+                                {
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].EndDate,
+                                   new
+                                    {
+                                        @type = "date",
+                                        @class = "form-control datepicker clsEndDate",
+                                        @Id = "dateExpEndDate" + i,
+                                        @Value = Model.ExperienceDetailsModel[i].EndDate != null ? ((DateTime)Model.ExperienceDetailsModel[i].EndDate).ToString("yyyy-MM-dd") : null
+                                    })
+                                }
+                                else
+                                {
+                                    @Html.TextBoxFor(model => model.ExperienceDetailsModel[i].EndDate,
+                                   new
+                                     {
+                                         @type = "date",
+                                         @class = "form-control datepicker clsEndDate",
+                                         @Id = "dateExpEndDate" + i,
+                                         @disabled = "disabled",
+                                         @Value = Model.ExperienceDetailsModel[i].EndDate != null ? ((DateTime)Model.ExperienceDetailsModel[i].EndDate).ToString("yyyy-MM-dd") : ""
+                                     })
+                                }
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-2" style="margin-top: 30px; text-align: right;">
+
+                            <input type="checkbox" id="checkBoxWorkingCompany@(i)"
+                                   @(Model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany ? "checked='true'" : "")
+                                   onclick="onClickWorkingCompany(@i);"> I Currently work here
+                            @Html.HiddenFor(model => model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany, new { @id = "hiddenWrkngCmpny" + @i, @class = "clsWrkngCmpny", @style = "" })
+
+                        </div>
+                        @Html.HiddenFor(model => model.ExperienceDetailsModel[i].IsActive, new { @id = "hiddenEmplIsActive" + @i, @class = "clsIsActive", @style = "" })
+
+                        @if (i > 0)
+                        {
+                            <div class="col-md-6">
+                                <i class="fa fa-minus-circle removeEmplymnt" onclick="removeEmployment(@i)" title=""> Remove employment</i>
+                            </div>
+                        }
+                    </div>
+                }
+                <div class="row">
+                    <div class="col-md-6">
+                        <i class="fa fa-plus-circle" onclick="addEmployment()" title=""> Add one more employment</i>
+                    </div>
+                </div>
+
+
+                <br />
+                <div class="row">
+                    <div class="col-md-12 col-sm-2">
+                        <div class="form-group">
+                            <button type="button" style="background:#f5af05;" class="btn btn-default" onclick="InsertExperienceDetails();">Save</button>
+                        </div>
+                        <div class="text-danger" style="text-align:center !important">
+                            <label id="invalidMsg"></label>
+                        </div>
+                    </div>
+                </div>
+                @*}*@
+            </div>
+        </form>
+    </div>
+</div>
+<style type="text/css">
+</style>

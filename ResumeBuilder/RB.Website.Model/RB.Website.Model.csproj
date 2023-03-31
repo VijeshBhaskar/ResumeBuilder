@@ -44,8 +44,12 @@
   <ItemGroup>
     <Compile Include="EducationDetailsModel.cs" />
     <Compile Include="ExperienceDetailsModel.cs" />
+    <Compile Include="HobbyDetailsModel.cs" />
+    <Compile Include="LanguageDetailsModel.cs" />
+    <Compile Include="MessageVM.cs" />
     <Compile Include="ResumeDataModel.cs" />
     <Compile Include="SelectedTemplateDetailsModel.cs" />
+    <Compile Include="SkillDetailsModel.cs" />
     <Compile Include="TemplateDetailsModel.cs" />
     <Compile Include="UserDetailsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

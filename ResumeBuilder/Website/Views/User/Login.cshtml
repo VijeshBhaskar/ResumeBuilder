@@ -20,6 +20,8 @@
     <script type="text/javascript" src="@Url.Content("~/dist/js/adminlte.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/Validation/Validation.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/Scripts/Validation/Validation.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/plugins/toastr/toastr.css")" />
+    <script type="text/javascript" src="@Url.Content("~/plugins/toastr/toastr.min.js")"></script>
 </head>
 <body class="hold-transition login-page">
     <div class="login-box">
@@ -111,8 +113,25 @@
 <script type="text/javascript">
     $("document").ready(function () {
         $("#frmSignUp").hide();
+        var msg = '@ViewBag.RegMsg';
+        if (msg != null && msg != '') {
+            if (msg == 'User Already Exists') {
+                toastr.error(msg);
+            }
+            else {
+                toastr.success(msg);
+            }
+        }
     });
-
+    function tempAlert(msg, duration) {
+        var el = document.createElement("div");
+        el.setAttribute("style", "position:absolute;top:40%;left:20%;background-color:white;");
+        el.innerHTML = msg;
+        setTimeout(function () {
+            el.parentNode.removeChild(el);
+        }, duration);
+        document.body.appendChild(el);
+    }
     function HideShowPassword() {
         var type = $("#txtConfirmPassword").attr("type");
 

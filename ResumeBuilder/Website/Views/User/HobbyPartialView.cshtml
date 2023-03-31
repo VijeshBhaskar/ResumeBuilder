@@ -1,0 +1,48 @@
+﻿@model RB.Website.Model.ResumeDataModel
+@{
+    ViewBag.Title = "HobbyPartialView";
+}
+<div class="card card-default" id="dvHobby">
+    <div class="card-body">
+        <form id="frmHobbyDetails">
+            @for (var i = 0; i < Model.HobbyDetailsModel.FindAll(x => x.IsActive).Count(); i++)
+            {
+                <div class="row clsHobby" id="hbyTopDiv@(i)">
+                    @Html.TextBoxFor(model => Model.HobbyDetailsModel[i].HobbyDetailsID, new { @class = "", @style = "display:none" })
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Hobby</label>
+                            @Html.TextBoxFor(model => Model.HobbyDetailsModel[i].HobbyName, new { @class = "form-control clsHobbyName", @id = "txtHobbyName" })
+
+                            <span class="text-danger"></span>
+
+
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => Model.HobbyDetailsModel[i].IsActive, new { @id = "hiddenHobbyIsActive" + i, @class = "clsHobbyIsActive" })
+                    @if (i > 0)
+                    {
+                        <div class="col-md-8">
+                            <i class="fa fa-minus-circle removeHobby" onclick="removeHobby(@i)" title=""> Remove Hobby</i>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fa fa-plus-circle" onclick="addHobby()"> Add one more hobby</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-2">
+                    <div class="form-group">
+                        <button type="button" style="background:#f5af05;" class="btn btn-default" onclick="InsertHobbyDetails();">Save</button>
+                    </div>
+                    <div class="text-danger" style="text-align:center !important">
+                        <label id="invalidMsg"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

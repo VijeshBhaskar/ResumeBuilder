@@ -1,0 +1,99 @@
+﻿@model RB.Website.Model.ResumeDataModel
+@{
+    ViewBag.Title = "EducationPartialView";
+}
+
+<div class="card card-default" id="dvEducation">
+    <div class="card-body">
+        <form id="frmEducationDetails">
+            @for (var i = 0; i < Model.EducationDetailsModel.FindAll(x => x.IsActive).Count(); i++)
+            {
+                <div class="row clsEdu" id="eduTopDiv@(i)">
+                    @Html.TextBoxFor(Mode => Model.EducationDetailsModel[i].EducationDetailID, new { @class = "", @style = "display:none" })
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Education</label>
+                            @Html.TextBoxFor(model => Model.EducationDetailsModel[i].Education, new { @class = "form-control clsEducation", @id = "txtEducation" })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>School</label>
+                            @Html.TextBoxFor(model => Model.EducationDetailsModel[i].School, new { @class = "form-control clsEduSchool", @id = "txtSchool" })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            @*@Html.TextBoxFor(model => Model.EducationDetailsModel[i].StartDate, new
+                                {
+                                    @type = "date",
+                                    @class = "form-control datepicker",
+                                    @Value = Model.EducationDetailsModel[i].StartDate.ToString("yyyy-MM-dd")
+                                })*@
+                            @Html.TextBoxFor(model => model.EducationDetailsModel[i].StartDate, new
+                       {
+                           @type = "date",
+                           @class = "form-control datepicker clsEduStartDate",
+                           @id = "dateExpStartDate" + i,
+                           @Value = Model.EducationDetailsModel[i].StartDate != null ? ((DateTime)Model.EducationDetailsModel[i].StartDate).ToString("yyyy-MM-dd") : null
+                       })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>End Date</label>
+                            @*@Html.TextBoxFor(model => Model.EducationDetailsModel[i].EndDate, new
+                                {
+                                    @type = "date",
+                                    @class = "form-control datepicker",
+                                    @Value = Model.EducationDetailsModel[i].EndDate.ToString("yyyy-MM-dd")
+                                })*@
+                            @Html.TextBoxFor(model => model.EducationDetailsModel[i].EndDate, new
+                       {
+                           @type = "date",
+                           @class = "form-control datepicker clsEduEndDate",
+                           @id = "dateExpStartDate" + i,
+                           @Value = Model.EducationDetailsModel[i].EndDate != null ? ((DateTime)Model.EducationDetailsModel[i].EndDate).ToString("yyyy-MM-dd") : null
+                       })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>City</label>
+                            @Html.TextBoxFor(model => Model.EducationDetailsModel[i].City, new { @class = "form-control clsEduCity", @id = "txtCity" })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.EducationDetailsModel[i].IsActive, new { @id = "hiddenEduIsActive" + @i, @class = "clsEduIsActive", @style = "" })
+
+                    @if (i > 0)
+                    {
+                        <div class="col-md-8">
+                            <i class="fa fa-minus-circle removeEducation" onclick="removeEducation(@i)" title=""> Remove education</i>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fa fa-plus-circle" onclick="addEducation()"> Add one more education</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-2">
+                    <div class="form-group">
+                        <button type="button" style="background:#f5af05;" class="btn btn-default" onclick="InsertEducationDetails();">Save</button>
+                    </div>
+                    <div class="text-danger" style="text-align:center !important">
+                        <label id="invalidMsg"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

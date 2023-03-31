@@ -330,6 +330,7 @@ function TabClick(tab) {
         $("#dvPersonalDetails").hide();
         $("#dvEducation").show();
     }
+
 }
 function formatDate(date) {
     var date = new Date(parseInt(date.substr(6)));

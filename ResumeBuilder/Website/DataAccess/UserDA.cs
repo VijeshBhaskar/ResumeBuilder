@@ -9,27 +9,34 @@ using System.Linq;
 using System.Threading.Tasks;
 using Website.Common.ConfigSettings;
 using Website.Common.Logger;
+using Website.TableType;
 
 namespace Website.DataAccess
 {
     public class UserDA
     {
-        public static async Task CreateUser(UserLoginDTO userDetails)
+        public static async Task<UserCreationResponseDTO> CreateUser(UserLoginDTO userDetails)
         {
+            UserCreationResponseDTO response = new UserCreationResponseDTO();
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Email", userDetails.Email);
                 param.Add("@Password", userDetails.Password);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                param.Add("@IsSuccess", dbType: DbType.Boolean, direction: ParameterDirection.Output, size: 100);
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
                     await connection.ExecuteAsync("RB.InsertUserDetails", param, commandType: CommandType.StoredProcedure);
+                    response.IsSuccess = param.Get<bool>("@IsSuccess");
+                    response.Message = param.Get<string>("@Message");
                 }
             }
             catch (Exception ex)
             {
                 await Logger.Error(ex, "Error in UserDA.CreateUser");
             }
+            return response;
         }
         public static async Task<UserDetailsDTO> LoginUser(UserLoginDTO userDetails)
         {
@@ -50,28 +57,27 @@ namespace Website.DataAccess
             }
             return result;
         }
-        public static async Task<UserSaveResponseDTO> InsertPersonalDetails(UserDetailsDTO userDetails)
+        public static async Task<UserDetailsDTO> InsertPersonalDetails(UserDetailsDTO userDetails)
         {
-            UserSaveResponseDTO response = null; ;
-
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@PersonalDetailD", userDetails.PersonalDetailD);
                 param.Add("@UserID", userDetails.UserID);
                 param.Add("@FirstName", userDetails.FirstName);
                 param.Add("@LastName", userDetails.LastName);
                 param.Add("@Email", userDetails.Email);
                 param.Add("@PhoneNumber", userDetails.PhoneNumber);
                 param.Add("@Address", userDetails.Address);
+                param.Add("@Summary", userDetails.Summary);
+                param.Add("@JobTitle", userDetails.JobTitle);
                 param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                param.Add("@PersonalID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
 
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
                     await connection.ExecuteAsync("RB.InsertPersonalDetails", param, commandType: CommandType.StoredProcedure);
-                    response = new UserSaveResponseDTO()
-                    {
-                        Message = param.Get<string>("@Message")
-                    };
+                    userDetails.PersonalDetailD = param.Get<long>("@PersonalID");
                 }
             }
 
@@ -79,41 +85,55 @@ namespace Website.DataAccess
             {
                 await Logger.Error(ex, "Error in UserDA.InsertPersonalDetails");
             }
-            return response;
+            return userDetails;
         }
         public static async Task<List<ExperienceDetailsDTO>> InsertExperienceDetails(List<ExperienceDetailsDTO> expDetails)
         {
 
             try
             {
+                DataTable expItems = TableTypes.CreateExpTable();
                 foreach (ExperienceDetailsDTO item in expDetails)
                 {
-                    DynamicParameters param = new DynamicParameters();
-                    param.Add("@ExperienceDetailsID", item.ExperienceDetailsID);
-                    param.Add("@JobTitle", item.JobTitle);
-                    param.Add("@Employer", item.Employer);
-                    param.Add("@City", item.City);
-                    param.Add("@Country", item.Country);
-                    param.Add("@StartDate", item.StartDate);
-                    param.Add("@EndDate", item.EndDate);
-                    param.Add("@IsCurrentlyWorkingCompany", item.IsCurrentlyWorkingCompany);
-                    param.Add("@UserID", item.UserID);
-                    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
-
-                    DataTable myDataTable = new DataTable("MyDataType");
-
-                    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                    {
-                        await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
-                        //response = new UserSaveResponseDTO()
-                        //{
-                        //    Message = param.Get<string>("@Message"),
-                        //    item.ExperienceDetailsID = param.Get<long>("@id")
-
-                        //};
-                        item.ExperienceDetailsID = param.Get<long>("@ExpID");
-                    }
+                    expItems.Rows.Add(item.ExperienceDetailsID, item.JobTitle, item.Employer, item.City, item.Country, item.StartDate, item.EndDate,
+                       item.IsCurrentlyWorkingCompany, item.IsActive);
                 }
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@ExpTableType", expItems.AsTableValuedParameter("RB.TT_ExpDetails"));
+                param.Add("@UserID", expDetails[0].UserID);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
+                }
+                //foreach (ExperienceDetailsDTO item in expDetails)
+                //{
+                //    DynamicParameters param = new DynamicParameters();
+                //    param.Add("@ExperienceDetailsID", item.ExperienceDetailsID);
+                //    param.Add("@JobTitle", item.JobTitle);
+                //    param.Add("@Employer", item.Employer);
+                //    param.Add("@City", item.City);
+                //    param.Add("@Country", item.Country);
+                //    param.Add("@StartDate", item.StartDate);
+                //    if (!item.IsCurrentlyWorkingCompany)
+                //    {
+                //        param.Add("@EndDate", item.EndDate);
+                //    }
+                //    param.Add("@IsCurrentlyWorkingCompany", item.IsCurrentlyWorkingCompany);
+                //    param.Add("@UserID", item.UserID);
+                //    param.Add("@IsActive", item.IsActive);
+                //    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                //    param.Add("@ExpID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
+
+                //    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                //    {
+                //        await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
+                //        if (param.Get<long?>("@ExpID") != null)
+                //        {
+                //            item.ExperienceDetailsID = param.Get<long>("@ExpID");
+                //        }
+                //    }
+                //}
 
             }
 
@@ -129,52 +149,180 @@ namespace Website.DataAccess
 
             try
             {
-
-                DataTable myDataTable = new DataTable("RB.EducationDataType");
-                myDataTable.Columns.Add("EducationDetailID", typeof(Int64));
-                myDataTable.Columns.Add("Education", typeof(string));
-                myDataTable.Columns.Add("School", typeof(string));
-                myDataTable.Columns.Add("StartDate", typeof(DateTime));
-                myDataTable.Columns.Add("EndDate", typeof(DateTime));
-                myDataTable.Columns.Add("City", typeof(string));
+                DataTable eduItems = TableTypes.CreateEduTable();
                 foreach (EducationDetailsDTO item in eduDetails)
                 {
-                    myDataTable.Rows.Add(item.EducationDetailID, item.Education, item.School, item.StartDate, item.EndDate, item.City);
+                    eduItems.Rows.Add(item.EducationDetailID, item.Education, item.School, item.StartDate, item.EndDate, item.City, item.IsActive);
                 }
-                //DynamicParameters param = new DynamicParameters();
-                //param.ad("@EducationData", myDataTable);
-                //param.Add("@UserID", eduDetails[0].UserID);
-                //param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
-                //using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                //{
-                //    //await connection.ExecuteAsync("RB.InsertEducationDetails", param, commandType: CommandType.StoredProcedure);
-                //    eduDetails = await connection.QueryFirstOrDefaultAsync<List<EducationDetailsDTO>>("RB.InsertEducationDetails", param, commandType: CommandType.StoredProcedure);
-                //}
-                //return eduDetails;
 
-                using (SqlConnection connection = new SqlConnection(ConfigSettings.ConnectionString))
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@EduTableType", eduItems.AsTableValuedParameter("RB.TT_EducationDetails"));
+                param.Add("@UserID", eduDetails[0].UserID);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
-                    using (SqlCommand cmd = new SqlCommand("RB.InsertEducationDetails"))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Connection = connection;
-                        cmd.Parameters.AddWithValue("@EducationData", myDataTable);
-                        cmd.Parameters.Add("@UserID", eduDetails[0].UserID);
-                        //  cmd.Parameters.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
-                        connection.Open();
-                        cmd.ExecuteNonQuery();
-                        connection.Close();
-                    }
+                    await connection.ExecuteAsync("RB.InsertEducationDetails", param, commandType: CommandType.StoredProcedure);
                 }
-                return eduDetails;
 
+                //foreach (EducationDetailsDTO item in eduDetails)
+                //{
+                //    DynamicParameters param = new DynamicParameters();
+                //    param.Add("@EducationDetailID", item.EducationDetailID);
+                //    param.Add("@Education", item.Education);
+                //    param.Add("@School", item.School);
+                //    param.Add("@StartDate", item.StartDate);
+                //    param.Add("@EndDate", item.EndDate);
+                //    param.Add("@City", item.City);
+                //    param.Add("@UserID", item.UserID);
+                //    param.Add("@IsActive", item.IsActive);
+                //    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                //    param.Add("@EduID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
+
+                //    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                //    {
+                //        await connection.ExecuteAsync("RB.InsertEducationDetails", param, commandType: CommandType.StoredProcedure);
+                //        if (param.Get<long?>("@EduID") != null)
+                //        {
+                //            item.EducationDetailID = param.Get<long>("@EduID");
+                //        }
+                //    }
+                //}
+
+                return eduDetails;
             }
 
             catch (Exception ex)
             {
-                await Logger.Error(ex, "Error in UserDA.InsertPersonalDetails");
+                await Logger.Error(ex, "Error in UserDA.InsertEducationDetails");
             }
             return eduDetails;
+        }
+        public static async Task<List<SkillDetailsDTO>> InsertSkillDetails(List<SkillDetailsDTO> skillDetails)
+        {
+
+            try
+            {
+                DataTable skillItems = TableTypes.CreateSkillTable();
+                foreach (SkillDetailsDTO item in skillDetails)
+                {
+                    skillItems.Rows.Add(item.SkillDetailID, item.SkillName, item.SkillRating, item.IsActive);
+                }
+
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@SkillTableType", skillItems.AsTableValuedParameter("RB.TT_SkillDetails"));
+                param.Add("@UserID", skillDetails[0].UserID);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    await connection.ExecuteAsync("RB.InsertSkillsDetails", param, commandType: CommandType.StoredProcedure);
+                }
+                return skillDetails;
+            }
+
+            catch (Exception ex)
+            {
+                await Logger.Error(ex, "Error in UserDA.InsertEducationDetails");
+            }
+            return skillDetails;
+        }
+
+        public static async Task<List<HobbyDetailsDTO>> InsertHobbyDetails(List<HobbyDetailsDTO> hobbyDetails)
+        {
+
+            try
+            {
+                DataTable hobbyItems = TableTypes.CreateHobbyTable();
+                foreach (HobbyDetailsDTO item in hobbyDetails)
+                {
+                    hobbyItems.Rows.Add(item.HobbyDetailsID, item.HobbyName, item.IsActive);
+                }
+
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@HobbyTableType", hobbyItems.AsTableValuedParameter("RB.TT_HobbyDetails"));
+                param.Add("@UserID", hobbyDetails[0].UserID);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    await connection.ExecuteAsync("RB.InsertHobbyDetails", param, commandType: CommandType.StoredProcedure);
+                }
+
+                //foreach (HobbyDetailsDTO item in hobbyDetails)
+                //{
+                //    DynamicParameters param = new DynamicParameters();
+                //    param.Add("@HobbyDetailsID", item.HobbyDetailsID);
+                //    param.Add("@HobbyName", item.HobbyName);
+                //    param.Add("@IsActive", item.IsActive);
+                //    param.Add("@UserID", item.UserID);
+                //    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                //    param.Add("@HobbyID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
+
+                //    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                //    {
+                //        await connection.ExecuteAsync("RB.InsertHobbyDetails", param, commandType: CommandType.StoredProcedure);
+                //        if (param.Get<long?>("@HobbyID") != null)
+                //        {
+                //            item.HobbyDetailsID = param.Get<long>("@HobbyID");
+                //        }
+                //    }
+                //}
+
+                //return hobbyDetails;
+            }
+
+            catch (Exception ex)
+            {
+                await Logger.Error(ex, "Error in UserDA.InsertHobbyDetails");
+            }
+            return hobbyDetails;
+        }
+        public static async Task<List<LanguageDetailsDTO>> InsertLanguageDetails(List<LanguageDetailsDTO> languageDetails)
+        {
+
+            try
+            {
+                DataTable lngtems = TableTypes.CreateLangTable();
+                foreach (LanguageDetailsDTO item in languageDetails)
+                {
+                    lngtems.Rows.Add(item.LanguageDetailsID, item.LanguageName, item.IsActive);
+                }
+
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@LangTableType", lngtems.AsTableValuedParameter("RB.TT_LangDetails"));
+                param.Add("@UserID", languageDetails[0].UserID);
+                param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    await connection.ExecuteAsync("RB.InsertLanguageDetails", param, commandType: CommandType.StoredProcedure);
+                }
+
+                //foreach (LanguageDetailsDTO item in languageDetails)
+                //{
+                //    DynamicParameters param = new DynamicParameters();
+                //    param.Add("@LanguageDetailID", item.LanguageDetailsID);
+                //    param.Add("@LanguageName", item.LanguageName);
+                //    param.Add("@UserID", item.UserID);
+                //    param.Add("@IsActive", item.IsActive);
+                //    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
+                //    param.Add("@LangID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
+
+                //    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                //    {
+                //        await connection.ExecuteAsync("RB.InsertLanguageDetails", param, commandType: CommandType.StoredProcedure);
+                //        if (param.Get<long?>("@LangID") != null)
+                //        {
+                //            item.LanguageDetailsID = param.Get<long>("@LangID");
+                //        }
+                //    }
+                //}
+
+                return languageDetails;
+            }
+
+            catch (Exception ex)
+            {
+                await Logger.Error(ex, "Error in UserDA.InsertLanguageDetails");
+            }
+            return languageDetails;
         }
         public static async Task<IEnumerable<TemplateDetailsDTO>> GetTemplatesDetails()
         {
@@ -195,15 +343,15 @@ namespace Website.DataAccess
             }
             return result;
         }
-        public static async Task<string> GetTemplatesDetailsByID()
+        public static async Task<string> GetTemplatesDetailsByID(long userID)
         {
             string result = null; ;
 
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@TemplateId", 1);
-                param.Add("@UserID", 1);
+                param.Add("@TemplateId", 2);
+                param.Add("@UserID", userID);
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {
                     result = await connection.QueryFirstOrDefaultAsync<string>("RB.SelectTemplateDetailByID", param, commandType: CommandType.StoredProcedure);
@@ -244,6 +392,21 @@ namespace Website.DataAccess
                     //result.EducationDetailsModel = await connection.QueryAsync<List<EducationDetailsModel>>("RB.GetEducationDetails", param, commandType: CommandType.StoredProcedure);
                     IEnumerable<EducationDetailsModel> eduDetails = await connection.QueryAsync<EducationDetailsModel>("RB.GetEducationDetails", param, commandType: CommandType.StoredProcedure);
                     result.EducationDetailsModel = eduDetails.ToList();
+                }
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    IEnumerable<SkillDetailsModel> skillDetails = await connection.QueryAsync<SkillDetailsModel>("RB.GetSkillDetails", param, commandType: CommandType.StoredProcedure);
+                    result.SkillDetailsModel = skillDetails.ToList();
+                }
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    IEnumerable<HobbyDetailsModel> hobbyDetails = await connection.QueryAsync<HobbyDetailsModel>("RB.GetHobbyDetails", param, commandType: CommandType.StoredProcedure);
+                    result.HobbyDetailsModel = hobbyDetails.ToList();
+                }
+                using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
+                {
+                    IEnumerable<LanguageDetailsModel> langDetails = await connection.QueryAsync<LanguageDetailsModel>("RB.GetLanguageDetails", param, commandType: CommandType.StoredProcedure);
+                    result.LanguageDetailsModel = langDetails.ToList();
                 }
 
             }

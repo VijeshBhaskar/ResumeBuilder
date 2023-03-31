@@ -1,0 +1,48 @@
+﻿@model RB.Website.Model.ResumeDataModel
+@{
+    ViewBag.Title = "LanguagePartialView";
+}
+
+<div class="card card-default" id="dvLanguage">
+    <div class="card-body">
+        <form id="frmLanguageDetails">
+            @for (var i = 0; i < Model.LanguageDetailsModel.Count(); i++)
+            {
+
+                <div class="row clsLang" id="lngTopDiv@(i)">
+                    @Html.TextBoxFor(model => Model.LanguageDetailsModel[i].LanguageDetailsID, new { @class = "", @style = "display:none" })
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Language</label>
+                            @Html.TextBoxFor(model => Model.LanguageDetailsModel[i].LanguageName, new { @class = "form-control clsLngName", @id = "txtLngName" })
+                            <span class="text-danger"></span>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(model => model.LanguageDetailsModel[i].IsActive, new { @id = "hiddenLngIsActive" + @i, @class = "clsLngIsActive", @style = "" })
+
+                    @if (i > 0)
+                    {
+                        <div class="col-md-8">
+                            <i class="fa fa-minus-circle removeLng" onclick="removeLanguage(@i)" title=""> Remove Language</i>
+                        </div>
+                    }
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fa fa-plus-circle" onclick="addLanguage()"> Add one more language</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-2">
+                    <div class="form-group">
+                        <button type="button" style="background:#f5af05;" class="btn btn-default" onclick="InsertLanguageDetails();">Save</button>
+                    </div>
+                    <div class="text-danger" style="text-align:center !important">
+                        <label id="invalidMsg"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

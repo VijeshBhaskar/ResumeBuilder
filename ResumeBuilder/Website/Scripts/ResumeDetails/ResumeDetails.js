@@ -9,119 +9,7 @@
 });
 
 $("document").ready(function () {
-
-    //$("#dvWarrantyDetails").hide();
-    //$("#txtInstallerName").autocomplete({
-    //    source: function (request, response) {
-    //        $.ajax({
-    //            url: "/User/SelectInstallerDetailsByName",
-    //            data: { installerName: request.term },
-    //            success: function (res) {
-    //                var data = $.map(res.Data, function (item) {
-    //                    return {
-    //                        label: item.InstallerName,
-    //                        installerDetailsID: item.InstallerDetailsID,
-    //                        address: item.Address
-    //                    };
-    //                });
-
-    //                response(data);
-    //            }
-    //        });
-    //    },
-    //    select: function (event, ui) {
-    //        $("#hdnInstallerDetailsID").val(ui.item ? ui.item.installerDetailsID : 0);
-    //    },
-    //    change: function (event, ui) {
-    //        $("#hdnInstallerDetailsID").val(ui.item ? ui.item.installerDetailsID : 0);
-    //    }
-    //});
-
-    //$("#txtRoleID1").blur(function () {
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/User/SelectWarrantyByRoleID",
-    //        data: { roleID: $("#txtRoleID1").val() },
-    //        contentType: "application/json",
-    //        headers: {
-    //            'Access-Control-Allow-Origin': '*',
-    //        },
-    //        success: function (response) {
-    //            if (response != null) {
-    //                switch (response.Status) {
-    //                    case ResponseCode.Success:
-    //                        $("#txtWarranty1").val(response.Data);
-    //                        break;
-    //                    case ResponseCode.InvalidRequest:
-    //                        $("#txtWarranty1").val(null);
-    //                        toastr.error(response.Message);
-    //                        break;
-    //                }
-    //            }
-    //            else {
-    //                toastr.error(response.Message);
-    //            }
-    //        },
-    //        error: function (err) {
-    //            console.log(err, 'ajax txtRoleID blur error...');
-    //        }
-    //    });
-    //});
-    //$("#txtRoleID2").blur(function () {
-    //    $.ajax({
-    //        type: "GET",
-    //        url: "/User/SelectWarrantyByRoleID",
-    //        data: { roleID: $("#txtRoleID2").val() },
-    //        contentType: "application/json",
-    //        headers: {
-    //            'Access-Control-Allow-Origin': '*',
-    //        },
-    //        success: function (response) {
-    //            if (response != null) {
-    //                switch (response.Status) {
-    //                    case ResponseCode.Success:
-    //                        $("#txtWarranty2").val(response.Data);
-    //                        break;
-    //                    case ResponseCode.InvalidRequest:
-    //                        $("#txtWarranty2").val(null);
-    //                        toastr.error(response.Message);
-    //                        break;
-    //                }
-    //            }
-    //            else {
-    //                toastr.error(response.Message);
-    //            }
-    //        },
-    //        error: function (err) {
-    //            console.log(err, 'ajax txtRoleID blur error...');
-    //        }
-    //    });
-    //});
-    //$('#txtPhoneNumber,#txtWarrantyPhoneNumber').on('keypress', function (key) {
-    //    if (key.charCode < 48 || key.charCode > 57) {
-    //        return false;
-    //    }
-    //});
-    //$("#txtPhoneNumber,#txtWarrantyPhoneNumber").bind("paste", function (event) {
-    //    if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
-    //        event.preventDefault();
-    //    }
-    //});
-
-    //$("body").on("click", "#btnAddRow", function () {
-    //    $("#rw2").show();
-    //    $("#btnAddRow").hide();
-    //});
-    //$("body").on("click", "#btnRemoveRow", function () {
-    //    $("#rw2").hide();
-    //    $("#btnAddRow").show();
-    //    $("#txtRoleID2").val('');
-    //    $("#txtWarranty2").val('');
-    //    $("#txtConsumedQty2").val('');
-    //});
-
 });
-
 function InsertPersonalDetails() {
     debugger
     var isValid = true;
@@ -156,9 +44,27 @@ function InsertPersonalDetails() {
         }
     }
     else {
-        email.next("span").html("email id is required");
+        email.next("span").html("Email id is required");
         email.css("border-color", "red");
         isValid = false;
+    }
+    if ($("#txtPhoneNumber").val() == null || $("#txtPhoneNumber").val() == '') {
+        $("#txtPhoneNumber").next("span").html("Phone number is required");
+        $("#txtPhoneNumber").css("border-color", "red");
+        isValid = false;
+    }
+    else {
+        $("#txtPhoneNumber").next("span").html("");
+        $("#txtPhoneNumber").css("border-color", "");
+    }
+    if ($("#txtAddress").val() == null || $("#txtAddress").val() == '') {
+        $("#txtAddress").next("span").html("Address is required");
+        $("#txtAddress").css("border-color", "red");
+        isValid = false;
+    }
+    else {
+        $("#txtAddress").next("span").html("");
+        $("#txtAddress").css("border-color", "");
     }
     if (!isValid) {
         return false;
@@ -170,15 +76,14 @@ function InsertPersonalDetails() {
     $.ajax({
         url: "/User/InsertPersonalDetails",
         type: "POST",
-        dataType: 'json',
+        dataType: 'html',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
-        success: function (data, textStatus, XmlHttpRequest) {
+        success: function (data) {
             debugger;
             $("#loader").hide();
-            if (XmlHttpRequest.status === 200) {
-                TabClick('tabExperience');
-            }
+            $("#personalPartial").html(data);
+            toastr.success("Saved Successfully");
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             $("#loader").hide();
@@ -188,29 +93,64 @@ function InsertPersonalDetails() {
 }
 
 function InsertExperienceDetails() {
+    debugger
     var isValid = true;
 
     if (!ValidateForm("frmPersonalDetails")) {
         isValid = false;
     }
-
-  /*  $("#frmExperienceDetails").submit();*/
-
+    isValid = validateExperience();
+    if (!isValid) {
+        return false;
+    }
     $("#loader").show();
     debugger
     var valdata = $("#frmExperienceDetails").serialize();
     $.ajax({
         url: "/User/InsertExperienceDetails",
         type: "POST",
-        dataType: 'json',
+        dataType: 'html',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
-        success: function (data, textStatus, XmlHttpRequest) {
+        success: function (data) {
             debugger;
+            //$("#loader").hide();
+            //$("#expPartial").html('');
+            //$("#expPartial").html(data);
+            //toastr.success("Saved Successfully");
+            getResumeDetails('tabExperience');
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             $("#loader").hide();
-            if (XmlHttpRequest.status === 200) {
-                TabClick('tabEducation');
+            alert(errorThrown);
+        }
+    });
+}
+function getResumeDetails(tabName) {
+    $.ajax({
+        url: "/User/ResumeDetails",
+        type: "POST",
+        dataType: 'html',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        success: function (data) {
+            debugger;
+            if (tabName == 'tabExperience') {
+                TabClick("tabExperience");
             }
+            else if (tabName == 'tabEducation') {
+                TabClick("tabEducation");
+            }
+            else if (tabName == 'tabSkills') {
+                TabClick("tabSkills");
+            }
+            else if (tabName == 'tabLanguage') {
+                TabClick("tabLanguage");
+            }
+            else if (tabName == 'tabHobbies') {
+                TabClick("tabHobbies");
+            }
+            $("#loader").hide();
+            toastr.success("Saved Successfully");
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             $("#loader").hide();
@@ -224,8 +164,118 @@ function InsertEducationDetails() {
     if (!ValidateForm("frmEducationDetails")) {
         isValid = false;
     }
+    isValid = validateEducation();
+    if (!isValid) {
+        return false;
+    }
+    $("#loader").show();
+    debugger
+    var valdata = $("#frmEducationDetails").serialize();
+    $.ajax({
+        url: "/User/InsertEducationDetails",
+        type: "POST",
+        dataType: 'html',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        success: function (data) {
+            debugger;
+            getResumeDetails('tabEducation');
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loader").hide();
+            alert(errorThrown);
+        }
+    });
+}
+function InsertSkillDetails() {
+    var isValid = true;
+    if (!ValidateForm("frmSkillsDetails")) {
+        isValid = false;
+    }
+    isValid = validateSkill();
+    if (!isValid) {
+        return false;
+    }
+    $("#loader").show();
+    debugger
+    var valdata = $("#frmSkillsDetails").serialize();
+    $.ajax({
+        url: "/User/InsertSkillDetails",
+        type: "POST",
+        dataType: 'html',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        success: function (data) {
+            debugger;
+            getResumeDetails('tabSkills');
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loader").hide();
+            alert(errorThrown);
+        }
+    });
+}
+function InsertHobbyDetails() {
+    var isValid = true;
 
-    $("#frmEducationDetails").submit();
+    if (!ValidateForm("frmHobbyDetails")) {
+        isValid = false;
+    }
+    isValid = validateHobby();
+    if (!isValid) {
+        return false;
+    }
+    $("#loader").show();
+    debugger
+    var valdata = $("#frmHobbyDetails").serialize();
+    $.ajax({
+        url: "/User/InsertHobbyDetails",
+        type: "POST",
+        dataType: 'html',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        success: function (data) {
+            debugger;
+            tabHobbies
+            getResumeDetails('tabHobbies');
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loader").hide();
+            alert(errorThrown);
+        }
+    });
+}
+function InsertLanguageDetails() {
+    var isValid = true;
+
+    if (!ValidateForm("frmLanguageDetails")) {
+        isValid = false;
+    }
+    isValid = validateLanguage();
+    if (!isValid) {
+        return false;
+    }
+    $("#loader").show();
+    debugger
+    var valdata = $("#frmLanguageDetails").serialize();
+    $.ajax({
+        url: "/User/InsertLanguageDetails",
+        type: "POST",
+        dataType: 'html',
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        data: valdata,
+        success: function (data) {
+            debugger;
+            getResumeDetails('tabLanguage');
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loader").hide();
+            alert(errorThrown);
+        }
+    });
 }
 function ViewResume() {
     $("#frmViewResume").submit();
@@ -237,54 +287,447 @@ function TabClick(tab) {
     $("#" + tab).css("background-color", "#f5af05");
 
     if (tab == "tabExperience") {
-        $("#dvPersonalDetails").hide();
-        $("#dvExperience").show();
-        $("#dvEducation").hide();
+        $("#personalPartial").hide();
+        $("#expPartial").show();
+        $("#eduPartial").hide();
+        $("#skillsPartial").hide();
+        $("#hobbyPartial").hide();
+        $("#LanguagePartial").hide();
     }
     else if (tab == "tabPersonalDetails") {
-        $("#dvExperience").hide();
-        $("#dvPersonalDetails").show();
-        $("#dvEducation").hide();
+        $("#expPartial").hide();
+        $("#personalPartial").show();
+        $("#eduPartial").hide();
+        $("#skillsPartial").hide();
+        $("#hobbyPartial").hide();
+        $("#LanguagePartial").hide();
     }
     else if (tab == "tabEducation") {
-        $("#dvExperience").hide();
-        $("#dvPersonalDetails").hide();
-        $("#dvEducation").show();
+        $("#expPartial").hide();
+        $("#personalPartial").hide();
+        $("#eduPartial").show();
+        $("#skillsPartial").hide();
+        $("#hobbyPartial").hide();
+        $("#LanguagePartial").hide();
+    }
+    else if (tab == "tabSkills") {
+        $("#expPartial").hide();
+        $("#personalPartial").hide();
+        $("#eduPartial").hide();
+        $("#skillsPartial").show();
+        $("#hobbyPartial").hide();
+        $("#LanguagePartial").hide();
+    }
+    else if (tab == "tabHobbies") {
+        $("#expPartial").hide();
+        $("#personalPartial").hide();
+        $("#eduPartial").hide();
+        $("#skillsPartial").hide();
+        $("#hobbyPartial").show();
+        $("#LanguagePartial").hide();
+    }
+    else if (tab == "tabLanguage") {
+        $("#expPartial").hide();
+        $("#personalPartial").hide();
+        $("#eduPartial").hide();
+        $("#skillsPartial").hide();
+        $("#hobbyPartial").hide();
+        $("#LanguagePartial").show();
     }
 }
 function onClickWorkingCompany(i) {
     debugger
     if ($("#checkBoxWorkingCompany" + i).prop('checked') == true) {
+        $("#hiddenWrkngCmpny" + i).val(true);
         $("#dateExpEndDate" + i).prop('disabled', true);
     }
     else {
+        $("#hiddenWrkngCmpny" + i).val(false);
         $("#dateExpEndDate" + i).prop('disabled', false);
     }
 }
 function addEmployment() {
     debugger
-    var valdata = $("#frmExperienceDetails").serialize();
-    $.ajax({
-        url: "/User/AddNewExperience",
-        type: "POST",
-        dataType: 'json',
-        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-        data: valdata,
-        success: function (data, textStatus, XmlHttpRequest) {
-            debugger;
-            $("#loader").hide();
-            if (XmlHttpRequest.status === 200) {
-                TabClick('tabExperience');
+    var isValid = validateExperience();
+    if (isValid) {
+        var valdata = $("#frmExperienceDetails").serialize();
+        $.ajax({
+            url: "/User/AddNewExperience",
+            type: "POST",
+            dataType: 'html',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: valdata,
+            success: function (result) {
+                debugger
+                $("#expPartial").html(result);
             }
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            $("#loader").hide();
-           /* alert(errorThrown);*/
-        }
-    });
+        });
+    }
+}
+function addEducation() {
+    debugger
+    var isValid = validateEducation();
+    if (isValid) {
+        var valdata = $("#frmEducationDetails").serialize();
+        $.ajax({
+            url: "/User/AddNewEducation",
+            type: "POST",
+            dataType: 'html',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: valdata,
+            success: function (result) {
+                debugger
+                $("#eduPartial").html(result);
+            }
+        });
+    }
+}
+function addSkill() {
+    debugger
+    var isValid = validateSkill();
+    if (isValid) {
+        var valdata = $("#frmSkillsDetails").serialize();
+        $.ajax({
+            url: "/User/AddNewSkill",
+            type: "POST",
+            dataType: 'html',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: valdata,
+            success: function (result) {
+                debugger
+                $('#skillsPartial').html(null);
+                $('#skillsPartial').html(result);
+            }
+        });
+    }
+}
+function addHobby() {
+    debugger
+    var isValid = validateHobby();
+    if (isValid) {
+        var valdata = $("#frmHobbyDetails").serialize();
+        $.ajax({
+            url: "/User/AddNewHobby",
+            type: "POST",
+            dataType: 'html',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: valdata,
+            success: function (result) {
+                debugger
+                $("#hobbyPartial").html(result);
+            }
+        });
+    }
+}
+function addLanguage() {
+    debugger
+    var isValid = validateLanguage();
+    if (isValid) {
+        var valdata = $("#frmLanguageDetails").serialize();
+        $.ajax({
+            url: "/User/AddNewLanguage",
+            type: "POST",
+            dataType: 'html',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            data: valdata,
+            success: function (result) {
+                debugger
+                $("#LanguagePartial").html(result);
+            }
+        });
+    }
+}
+function removeEmployment(index) {
+    debugger
+    $('#hiddenEmplIsActive' + index).val(false);
+    //$('#expTopDiv' + index).hide();
+    $('#expTopDiv' + index).hide();
+}
+function removeEducation(index) {
+    debugger
+    $('#hiddenEduIsActive' + index).val(false);
+    $('#eduTopDiv' + index).hide();
+}
+function removeSkill(index) {
+    debugger
+    $('#hiddenSkillsIsActive' + index).val(false);
+    /*  $('#sklTopDiv' + index).css({ "display": "none" });*/
+    $('#sklTopDiv' + index).hide();
+}
+function removeHobby(index) {
+    debugger
+    $('#hiddenHobbyIsActive' + index).val(false);
+    $('#hbyTopDiv' + index).hide();
+}
+function removeLanguage(index) {
+    debugger
+    $('#hiddenLngIsActive' + index).val(false);
+    $('#lngTopDiv' + index).hide();
 }
 function formatDate(date) {
     var date = new Date(parseInt(date.substr(6)));
     var month = date.getMonth() + 1;
     return (date.getDate().toString().length > 1 ? date.getDate() : "0" + date.getDate()) + "-" + (month.toString().length > 1 ? month : "0" + month) + "-" + date.getFullYear();
+}
+function validateExperience() {
+    debugger
+    var isValid = true;
+    $(".clsExp").each(function () {
+        if ($(this).find(".clsIsActive").val().toLowerCase() == "true") {
+            if ($(this).find(".clsJobTitle").val() == null || $(this).find(".clsJobTitle").val() == '') {
+                $(this).find(".clsJobTitle").next("span").html("Job Title is required");
+                $(this).find(".clsJobTitle").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsJobTitle").next("span").html("");
+                $(this).find(".clsJobTitle").css("border-color", "");
+            }
+
+            if ($(this).find(".clsEmployer").val() == null || $(this).find(".clsEmployer").val() == '') {
+                $(this).find(".clsEmployer").next("span").html("Employer is required");
+                $(this).find(".clsEmployer").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEmployer").next("span").html("");
+                $(this).find(".clsEmployer").css("border-color", "");
+            }
+
+            if ($(this).find(".clsCity").val() == null || $(this).find(".clsCity").val() == '') {
+                $(this).find(".clsCity").next("span").html("City is required");
+                $(this).find(".clsCity").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsCity").next("span").html("");
+                $(this).find(".clsCity").css("border-color", "");
+            }
+
+            if ($(this).find(".clsCountry").val() == null || $(this).find(".clsCountry").val() == '') {
+                $(this).find(".clsCountry").next("span").html("Country is required");
+                $(this).find(".clsCountry").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsCountry").next("span").html("");
+                $(this).find(".clsCountry").css("border-color", "");
+            }
+
+            if ($(this).find(".clsStartDate").val() == null || $(this).find(".clsStartDate").val() == '') {
+                $(this).find(".clsStartDate").next("span").html("Start date is required");
+                $(this).find(".clsStartDate").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsStartDate").next("span").html("");
+                $(this).find(".clsStartDate").css("border-color", "");
+            }
+            if ($(this).find(".clsWrkngCmpny").val().toLowerCase() == "false") {
+                if ($(this).find(".clsEndDate").val() == null || $(this).find(".clsEndDate").val() == '') {
+                    $(this).find(".clsEndDate").next("span").html("End date is required");
+                    $(this).find(".clsEndDate").css("border-color", "red");
+                    isValid = false;
+                }
+                else {
+                    $(this).find(".clsEndDate").next("span").html("");
+                    $(this).find(".clsEndDate").css("border-color", "");
+                }
+            }
+            else {
+                $(this).find(".clsEndDate").next("span").html("");
+                $(this).find(".clsEndDate").css("border-color", "");
+            }
+        }
+    });
+    //$(".clsJobTitle").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("Job Title is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    //$(".clsEmployer").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("Employer is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    //$(".clsCity").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("City is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    //$(".clsCountry").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("Country is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    //$(".clsStartDate").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("Start date is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    //$(".clsEndDate").each(function () {
+    //    if ($(this).val() == null || $(this).val() == '') {
+    //        $(this).next("span").html("End date is required");
+    //        $(this).css("border-color", "red");
+    //        isValid = false;
+    //    }
+    //    else {
+    //        $(this).next("span").html("");
+    //        $(this).css("border-color", "");
+    //    }
+    //});
+    return isValid;
+}
+function validateEducation() {
+    debugger
+    var isValid = true;
+    $(".clsEdu").each(function () {
+        if ($(this).find(".clsEduIsActive").val().toLowerCase() == "true") {
+            if ($(this).find(".clsEducation").val() == null || $(this).find(".clsEducation").val() == '') {
+                $(this).find(".clsEducation").next("span").html("Education is required");
+                $(this).find(".clsEducation").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEducation").next("span").html("");
+                $(this).find(".clsEducation").css("border-color", "");
+            }
+
+            if ($(this).find(".clsEduSchool").val() == null || $(this).find(".clsEduSchool").val() == '') {
+                $(this).find(".clsEduSchool").next("span").html("School is required");
+                $(this).find(".clsEduSchool").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEduSchool").next("span").html("");
+                $(this).find(".clsEduSchool").css("border-color", "");
+            }
+
+            if ($(this).find(".clsEduStartDate").val() == null || $(this).find(".clsEduStartDate").val() == '') {
+                $(this).find(".clsEduStartDate").next("span").html("Start date is required");
+                $(this).find(".clsEduStartDate").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEduStartDate").next("span").html("");
+                $(this).find(".clsEduStartDate").css("border-color", "");
+            }
+
+            if ($(this).find(".clsEduEndDate").val() == null || $(this).find(".clsEduEndDate").val() == '') {
+                $(this).find(".clsEduEndDate").next("span").html("End date is required");
+                $(this).find(".clsEduEndDate").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEduEndDate").next("span").html("");
+                $(this).find(".clsEduEndDate").css("border-color", "");
+            }
+
+            if ($(this).find(".clsEduCity").val() == null || $(this).find(".clsEduCity").val() == '') {
+                $(this).find(".clsEduCity").next("span").html("City is required");
+                $(this).find(".clsEduCity").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsEduCity").next("span").html("");
+                $(this).find(".clsEduCity").css("border-color", "");
+            }
+        }
+    });
+    return isValid;
+}
+function validateSkill() {
+    debugger
+    var isValid = true;
+    $(".clsSkill").each(function () {
+        if ($(this).find(".clsSkillIsActive").val().toLowerCase() == "true") {
+            if ($(this).find(".clsSkillName").val() == null || $(this).find(".clsSkillName").val() == '') {
+                $(this).find(".clsSkillName").next("span").html("Skill name required");
+                $(this).find(".clsSkillName").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsSkillName").next("span").html("");
+                $(this).find(".clsSkillName").css("border-color", "");
+            }
+
+            if ($(this).find(".clsRating").val() == null || $(this).find(".clsRating").val() == '' || $(this).find(".clsRating").val() == '0'
+                || parseInt($(this).find(".clsRating").val()) > 5 || parseInt($(this).find(".clsRating").val()) < 0) {
+                $(this).find(".clsRating").next("span").html("Please enter a rating between 0 to 5");
+                $(this).find(".clsRating").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsRating").next("span").html("");
+                $(this).find(".clsRating").css("border-color", "");
+            }
+        }
+    });
+    return isValid;
+}
+function validateLanguage() {
+    debugger
+    var isValid = true;
+    $(".clsLang").each(function () {
+        if ($(this).find(".clsLngIsActive").val().toLowerCase() == "true") {
+            if ($(this).find(".clsLngName").val() == null || $(this).find(".clsLngName").val() == '') {
+                $(this).find(".clsLngName").next("span").html("Language is required");
+                $(this).find(".clsLngName").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsLngName").next("span").html("");
+                $(this).find(".clsLngName").css("border-color", "");
+            }
+        }
+    });
+    return isValid;
+}
+function validateHobby() {
+    debugger
+    var isValid = true;
+    $(".clsHobby").each(function () {
+        if ($(this).find(".clsHobbyIsActive").val().toLowerCase() == "true") {
+            if ($(this).find(".clsHobbyName").val() == null || $(this).find(".clsHobbyName").val() == '') {
+                $(this).find(".clsHobbyName").next("span").html("Hobby is required");
+                $(this).find(".clsHobbyName").css("border-color", "red");
+                isValid = false;
+            }
+            else {
+                $(this).find(".clsHobbyName").next("span").html("");
+                $(this).find(".clsHobbyName").css("border-color", "");
+            }
+        }
+    });
+    return isValid;
 }

@@ -8,5 +8,9 @@ namespace RB.Website.Model
         public UserDetailsModel UserDetailsModel { get; set; }
         public List<ExperienceDetailsModel> ExperienceDetailsModel { get; set; }
         public List<EducationDetailsModel> EducationDetailsModel { get; set; }
+        public List<SkillDetailsModel> SkillDetailsModel { get; set; }
+        public List<HobbyDetailsModel> HobbyDetailsModel { get; set; }
+        public List<LanguageDetailsModel> LanguageDetailsModel { get; set; }
     }
+
 }

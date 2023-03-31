@@ -8,15 +8,15 @@ namespace Website.Service
 {
     public class UserService
     {
-        public static async Task CreateUser(UserLoginDTO userDetails)
+        public static async Task<UserCreationResponseDTO> CreateUser(UserLoginDTO userDetails)
         {
-            await UserDA.CreateUser(userDetails);
+            return await UserDA.CreateUser(userDetails);
         }
         public static async Task<UserDetailsDTO> LoginUser(UserLoginDTO userDetails)
         {
             return await UserDA.LoginUser(userDetails);
         }
-        public static async Task<UserSaveResponseDTO> InsertPersonalDetails(UserDetailsDTO userDetails)
+        public static async Task<UserDetailsDTO> InsertPersonalDetails(UserDetailsDTO userDetails)
         {
             return await UserDA.InsertPersonalDetails(userDetails);
         }
@@ -29,13 +29,28 @@ namespace Website.Service
            return await UserDA.InsertEducationDetails(eduDetails);
 
         }
+        public static async Task<List<SkillDetailsDTO>> InsertSkillDetails(List<SkillDetailsDTO> skillDetails)
+        {
+            return await UserDA.InsertSkillDetails(skillDetails);
+
+        }
+        public static async Task<List<HobbyDetailsDTO>> InsertHobbyDetails(List<HobbyDetailsDTO> hobbyDetails)
+        {
+            return await UserDA.InsertHobbyDetails(hobbyDetails);
+
+        }
+        public static async Task<List<LanguageDetailsDTO>> InsertLanguageDetails(List<LanguageDetailsDTO> languageDetails)
+        {
+            return await UserDA.InsertLanguageDetails(languageDetails);
+
+        }
         public static async Task<IEnumerable<TemplateDetailsDTO>> GetTemplatesDetails()
         {
            return await UserDA.GetTemplatesDetails();
         }
-        public static async Task<string> GetTemplatesDetailsByID()
+        public static async Task<string> GetTemplatesDetailsByID(long userID)
         {
-            return await UserDA.GetTemplatesDetailsByID();
+            return await UserDA.GetTemplatesDetailsByID(userID);
         }
 
         public static async Task<ResumeDataModel> GetResumeDetails(long UserID)

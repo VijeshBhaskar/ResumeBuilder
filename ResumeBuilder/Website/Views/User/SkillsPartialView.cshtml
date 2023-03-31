@@ -1,0 +1,54 @@
+﻿@model RB.Website.Model.ResumeDataModel
+@{
+    ViewBag.Title = "SkillsPartialView";
+}
+
+<div class="card card-default" id="dvSkill">
+    <div class="card-body">
+        <form id="frmSkillsDetails">
+            @for (var i = 0; i < Model.SkillDetailsModel.FindAll(x => x.IsActive).Count(); i++)
+            {
+            <div class="row clsSkill" id="sklTopDiv@(i)">
+                @Html.TextBoxFor(Mode => Model.SkillDetailsModel[i].SkillDetailID, new { @class = "", @style = "display:none" })
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Skill Name</label>
+                        @Html.TextBoxFor(model => Model.SkillDetailsModel[i].SkillName, new { @class = "form-control clsSkillName", @id = "txtSkillName" })
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Rating</label>
+                        @Html.TextBoxFor(model => Model.SkillDetailsModel[i].SkillRating, new { type = "number", min = "0", max = "5", @class = "form-control clsRating", @id = "txtRating" })
+                        <span class="text-danger"></span>
+                    </div>
+                </div>
+                @Html.HiddenFor(model => model.SkillDetailsModel[i].IsActive, new { @id = "hiddenSkillsIsActive" + @i, @class = "clsSkillIsActive", @style = "" })
+
+                @if (i > 0)
+                {
+                    <div class="col-md-6">
+                        <i class="fa fa-minus-circle removeSkill" onclick="removeSkill(@i)" title=""> Remove Skill</i>
+                    </div>
+                }
+            </div>
+            }
+            <div class="row">
+                <div class="col-md-6">
+                    <i class="fa fa-plus-circle" onclick="addSkill()"> Add one more Skills</i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-2">
+                    <div class="form-group">
+                        <button type="button" style="background:#f5af05;" class="btn btn-default" onclick="InsertSkillDetails();">Save</button>
+                    </div>
+                    <div class="text-danger" style="text-align:center !important">
+                        <label id="invalidMsg"></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
