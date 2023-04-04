@@ -25,6 +25,7 @@ namespace Website.TableType
             dt.Columns.Add("StartDate", typeof(DateTime));
             dt.Columns.Add("EndDate", typeof(DateTime));
             dt.Columns.Add("IsCurrentlyWorkingCompany", typeof(bool));
+            dt.Columns.Add("Description", typeof(string));
             dt.Columns.Add("IsActive", typeof(bool));
             return dt;
         }

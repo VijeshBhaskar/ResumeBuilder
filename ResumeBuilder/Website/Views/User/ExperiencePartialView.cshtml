@@ -49,6 +49,7 @@
                                @type = "date",
                                @class = "form-control datepicker clsStartDate",
                                @id = "dateExpStartDate" + i,
+                               @max = DateTime.Now,
                                @Value = Model.ExperienceDetailsModel[i].StartDate != null ? ((DateTime)Model.ExperienceDetailsModel[i].StartDate).ToString("yyyy-MM-dd") : null
                            })
                                 <span class="text-danger"></span>
@@ -91,6 +92,13 @@
                                    onclick="onClickWorkingCompany(@i);"> I Currently work here
                             @Html.HiddenFor(model => model.ExperienceDetailsModel[i].IsCurrentlyWorkingCompany, new { @id = "hiddenWrkngCmpny" + @i, @class = "clsWrkngCmpny", @style = "" })
 
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Description</label>
+                                @Html.TextAreaFor(model => model.ExperienceDetailsModel[i].Description, new { @class = "form-control clsDesc", @id = "txtDesc" + i })
+                                <span class="text-danger"></span>
+                            </div>
                         </div>
                         @Html.HiddenFor(model => model.ExperienceDetailsModel[i].IsActive, new { @id = "hiddenEmplIsActive" + @i, @class = "clsIsActive", @style = "" })
 

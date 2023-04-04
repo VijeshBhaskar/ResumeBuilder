@@ -48,9 +48,9 @@ namespace Website.Service
         {
            return await UserDA.GetTemplatesDetails();
         }
-        public static async Task<string> GetTemplatesDetailsByID(long userID)
+        public static async Task<string> GetTemplatesDetailsByID(long userID,int selectedTemplateID)
         {
-            return await UserDA.GetTemplatesDetailsByID(userID);
+            return await UserDA.GetTemplatesDetailsByID(userID, selectedTemplateID);
         }
 
         public static async Task<ResumeDataModel> GetResumeDetails(long UserID)

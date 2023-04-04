@@ -96,7 +96,7 @@ namespace Website.DataAccess
                 foreach (ExperienceDetailsDTO item in expDetails)
                 {
                     expItems.Rows.Add(item.ExperienceDetailsID, item.JobTitle, item.Employer, item.City, item.Country, item.StartDate, item.EndDate,
-                       item.IsCurrentlyWorkingCompany, item.IsActive);
+                       item.IsCurrentlyWorkingCompany,item.Description, item.IsActive);
                 }
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@ExpTableType", expItems.AsTableValuedParameter("RB.TT_ExpDetails"));
@@ -106,35 +106,6 @@ namespace Website.DataAccess
                 {
                     await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
                 }
-                //foreach (ExperienceDetailsDTO item in expDetails)
-                //{
-                //    DynamicParameters param = new DynamicParameters();
-                //    param.Add("@ExperienceDetailsID", item.ExperienceDetailsID);
-                //    param.Add("@JobTitle", item.JobTitle);
-                //    param.Add("@Employer", item.Employer);
-                //    param.Add("@City", item.City);
-                //    param.Add("@Country", item.Country);
-                //    param.Add("@StartDate", item.StartDate);
-                //    if (!item.IsCurrentlyWorkingCompany)
-                //    {
-                //        param.Add("@EndDate", item.EndDate);
-                //    }
-                //    param.Add("@IsCurrentlyWorkingCompany", item.IsCurrentlyWorkingCompany);
-                //    param.Add("@UserID", item.UserID);
-                //    param.Add("@IsActive", item.IsActive);
-                //    param.Add("@Message", dbType: DbType.String, direction: ParameterDirection.Output, size: 100);
-                //    param.Add("@ExpID", dbType: DbType.Int64, direction: ParameterDirection.Output, size: 100);
-
-                //    using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
-                //    {
-                //        await connection.ExecuteAsync("RB.InsertExperienceDetails", param, commandType: CommandType.StoredProcedure);
-                //        if (param.Get<long?>("@ExpID") != null)
-                //        {
-                //            item.ExperienceDetailsID = param.Get<long>("@ExpID");
-                //        }
-                //    }
-                //}
-
             }
 
             catch (Exception ex)
@@ -343,14 +314,14 @@ namespace Website.DataAccess
             }
             return result;
         }
-        public static async Task<string> GetTemplatesDetailsByID(long userID)
+        public static async Task<string> GetTemplatesDetailsByID(long userID,int selectedTemplateID)
         {
             string result = null; ;
 
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@TemplateId", 2);
+                param.Add("@TemplateId", selectedTemplateID);
                 param.Add("@UserID", userID);
                 using (var connection = new SqlConnection(ConfigSettings.ConnectionString))
                 {

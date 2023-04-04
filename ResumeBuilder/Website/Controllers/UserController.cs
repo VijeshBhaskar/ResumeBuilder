@@ -94,6 +94,10 @@ namespace Website.Controllers
         {
             try
             {
+                if (UserSessionDetails.UserDetails!=null)
+                {
+                    UserSessionDetails.UserDetails.SelectedTemplateID = selectedTemplateDetails.TemplateID;
+                }
                 return RedirectToAction("ResumeDetails", "User", new { selectedTemplateDetails.TemplateID });
                 //new { selectedTemplateDetails.TemplateID });
             }
@@ -239,6 +243,7 @@ namespace Website.Controllers
                         StartDate = item.StartDate,
                         EndDate = item.EndDate,
                         IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                        Description = item.Description,
                         IsActive = item.IsActive,
                         UserID = UserSessionDetails.UserDetails.UserID
                     };
@@ -261,6 +266,7 @@ namespace Website.Controllers
                             StartDate = item.StartDate,
                             EndDate = item.EndDate,
                             IsCurrentlyWorkingCompany = item.IsCurrentlyWorkingCompany,
+                            Description = item.Description,
                             IsActive = item.IsActive
                         };
 
@@ -786,7 +792,7 @@ namespace Website.Controllers
         [Route("ViewResume")]
         public async Task<ActionResult> ViewResume()
         {
-            string response = await UserService.GetTemplatesDetailsByID(UserSessionDetails.UserDetails.UserID);
+            string response = await UserService.GetTemplatesDetailsByID(UserSessionDetails.UserDetails.UserID, UserSessionDetails.UserDetails.SelectedTemplateID);
             ViewResumeModel veiwResume = new ViewResumeModel
             {
                 TemplateHtml = response

@@ -13,5 +13,6 @@ namespace RB.Website.DTO
         public long UserID { get; set; }
         public string Summary { get; set; }
         public string JobTitle { get; set; }
+        public int SelectedTemplateID { get; set; }
     }
 }
