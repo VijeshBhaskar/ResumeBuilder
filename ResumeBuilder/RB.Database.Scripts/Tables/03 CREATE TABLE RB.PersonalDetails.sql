@@ -1,7 +1,7 @@
 USE [db_ResumeBuilder]
 GO
 
-/****** Object:  Table [RB].[PersonalDetails]    Script Date: 19-03-2023 15:51:35 ******/
+/****** Object:  Table [RB].[PersonalDetails]    Script Date: 04-04-2023 20:31:37 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -18,11 +18,13 @@ CREATE TABLE [RB].[PersonalDetails](
 	[Address] [varchar](1000) NULL,
 	[CreatedOn] [datetime] NULL,
 	[ModifiedOn] [datetime] NULL,
+	[Summary] [varchar](max) NULL,
+	[JobTitle] [varchar](100) NULL,
  CONSTRAINT [PK_PersonalDetails] PRIMARY KEY CLUSTERED 
 (
 	[PersonalDetailD] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
 ALTER TABLE [RB].[PersonalDetails]  WITH CHECK ADD  CONSTRAINT [FK_PersonalDetails_UserDetails] FOREIGN KEY([UserID])

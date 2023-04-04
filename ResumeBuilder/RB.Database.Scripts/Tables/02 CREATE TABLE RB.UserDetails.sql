@@ -1,7 +1,7 @@
 USE [db_ResumeBuilder]
 GO
 
-/****** Object:  Table [RB].[UserDetails]    Script Date: 19-03-2023 15:50:14 ******/
+/****** Object:  Table [RB].[UserDetails]    Script Date: 04-04-2023 20:32:15 ******/
 SET ANSI_NULLS ON
 GO
 

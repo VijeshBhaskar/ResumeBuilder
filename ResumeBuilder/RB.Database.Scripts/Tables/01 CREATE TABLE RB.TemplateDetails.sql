@@ -1,7 +1,7 @@
 USE [db_ResumeBuilder]
 GO
 
-/****** Object:  Table [RB].[TemplateDetails]    Script Date: 19-03-2023 15:51:13 ******/
+/****** Object:  Table [RB].[TemplateDetails]    Script Date: 04-04-2023 20:32:04 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -19,6 +19,8 @@ CREATE TABLE [RB].[TemplateDetails](
 	[ExperienceHtml] [nvarchar](max) NULL,
 	[EducationHtml] [nvarchar](max) NULL,
 	[SkillsHtml] [nvarchar](max) NULL,
+	[HobbyHtml] [nvarchar](max) NULL,
+	[LanguageHtml] [nvarchar](max) NULL,
  CONSTRAINT [PK_TemplateDetails] PRIMARY KEY CLUSTERED 
 (
 	[TemplateId] ASC

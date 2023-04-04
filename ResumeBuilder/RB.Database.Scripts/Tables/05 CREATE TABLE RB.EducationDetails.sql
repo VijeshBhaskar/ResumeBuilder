@@ -1,7 +1,7 @@
 USE [db_ResumeBuilder]
 GO
 
-/****** Object:  Table [RB].[EducationDetails]    Script Date: 19-03-2023 15:52:31 ******/
+/****** Object:  Table [RB].[EducationDetails]    Script Date: 04-04-2023 20:30:00 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -18,6 +18,7 @@ CREATE TABLE [RB].[EducationDetails](
 	[City] [varchar](1000) NULL,
 	[CreatedOn] [datetime] NULL,
 	[ModifiedOn] [datetime] NULL,
+	[IsActive] [bit] NULL,
  CONSTRAINT [PK_EducationDetails] PRIMARY KEY CLUSTERED 
 (
 	[EducationDetailID] ASC
