@@ -1,5 +1,4 @@
 ﻿$(window).on('load', function () {
-    debugger
     if ($("#hdnTab").val() == "WarrantyCheck") {
         TabClick("tabExperience");
     }
@@ -312,7 +311,6 @@ function CheckWarrantyDetails() {
 }
 
 function TabClick(tab) {
-    debugger
     $(".column").css("background-color", "black");
     $("#" + tab).css("background-color", "#f5af05");
 

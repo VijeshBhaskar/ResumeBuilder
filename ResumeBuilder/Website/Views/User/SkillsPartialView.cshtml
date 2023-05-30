@@ -17,13 +17,13 @@
                         <span class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-6">
+                @*<div class="col-md-6">
                     <div class="form-group">
                         <label>Rating</label>
                         @Html.TextBoxFor(model => Model.SkillDetailsModel[i].SkillRating, new { type = "number", min = "0", max = "5", @class = "form-control clsRating", @id = "txtRating" })
                         <span class="text-danger"></span>
                     </div>
-                </div>
+                </div>*@
                 @Html.HiddenFor(model => model.SkillDetailsModel[i].IsActive, new { @id = "hiddenSkillsIsActive" + @i, @class = "clsSkillIsActive", @style = "" })
 
                 @if (i > 0)

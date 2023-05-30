@@ -52,13 +52,10 @@ namespace Website.Service
         {
             return await UserDA.GetTemplatesDetailsByID(userID, selectedTemplateID);
         }
-
         public static async Task<ResumeDataModel> GetResumeDetails(long UserID)
         {
             return await UserDA.GetResumeDetails(UserID);
-        }
-        
-
+        }       
         public static async Task<int> SelectWarrantyByRoleID(long roleID)
         {
             return await UserDA.SelectWarrantyByRoleID(roleID);

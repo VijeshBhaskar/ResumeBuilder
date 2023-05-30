@@ -1,17 +1,11 @@
 ﻿$(window).on('load', function () {
-    debugger
-    if ($("#hdnTab").val() == "WarrantyCheck") {
-        TabClick("tabExperience");
-    }
-    else {
-        TabClick("tabPersonalDetails");
-    }
+    TabClick("tabPersonalDetails");
 });
 
 $("document").ready(function () {
+    $(".clsStartDate").max = new Date();
 });
 function InsertPersonalDetails() {
-    debugger
     var isValid = true;
 
     if (!ValidateForm("frmPersonalDetails")) {
@@ -70,8 +64,6 @@ function InsertPersonalDetails() {
         return false;
     }
     $("#loader").show();
-    /*$("#frmPersonalDetails").submit();*/
-    debugger
     var valdata = $("#frmPersonalDetails").serialize();
     $.ajax({
         url: "/User/InsertPersonalDetails",
@@ -80,7 +72,6 @@ function InsertPersonalDetails() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
         success: function (data) {
-            debugger;
             $("#loader").hide();
             $("#personalPartial").html(data);
             toastr.success("Saved Successfully");
@@ -93,7 +84,6 @@ function InsertPersonalDetails() {
 }
 
 function InsertExperienceDetails() {
-    debugger
     var isValid = true;
 
     if (!ValidateForm("frmPersonalDetails")) {
@@ -104,7 +94,6 @@ function InsertExperienceDetails() {
         return false;
     }
     $("#loader").show();
-    debugger
     var valdata = $("#frmExperienceDetails").serialize();
     $.ajax({
         url: "/User/InsertExperienceDetails",
@@ -113,11 +102,6 @@ function InsertExperienceDetails() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
         success: function (data) {
-            debugger;
-            //$("#loader").hide();
-            //$("#expPartial").html('');
-            //$("#expPartial").html(data);
-            //toastr.success("Saved Successfully");
             getResumeDetails('tabExperience');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -133,7 +117,6 @@ function getResumeDetails(tabName) {
         dataType: 'html',
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         success: function (data) {
-            debugger;
             if (tabName == 'tabExperience') {
                 TabClick("tabExperience");
             }
@@ -169,7 +152,6 @@ function InsertEducationDetails() {
         return false;
     }
     $("#loader").show();
-    debugger
     var valdata = $("#frmEducationDetails").serialize();
     $.ajax({
         url: "/User/InsertEducationDetails",
@@ -178,7 +160,6 @@ function InsertEducationDetails() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
         success: function (data) {
-            debugger;
             getResumeDetails('tabEducation');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -197,7 +178,6 @@ function InsertSkillDetails() {
         return false;
     }
     $("#loader").show();
-    debugger
     var valdata = $("#frmSkillsDetails").serialize();
     $.ajax({
         url: "/User/InsertSkillDetails",
@@ -209,7 +189,6 @@ function InsertSkillDetails() {
             'Access-Control-Allow-Origin': '*',
         },
         success: function (data) {
-            debugger;
             getResumeDetails('tabSkills');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -229,7 +208,6 @@ function InsertHobbyDetails() {
         return false;
     }
     $("#loader").show();
-    debugger
     var valdata = $("#frmHobbyDetails").serialize();
     $.ajax({
         url: "/User/InsertHobbyDetails",
@@ -238,7 +216,6 @@ function InsertHobbyDetails() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
         success: function (data) {
-            debugger;
             tabHobbies
             getResumeDetails('tabHobbies');
         },
@@ -259,7 +236,6 @@ function InsertLanguageDetails() {
         return false;
     }
     $("#loader").show();
-    debugger
     var valdata = $("#frmLanguageDetails").serialize();
     $.ajax({
         url: "/User/InsertLanguageDetails",
@@ -268,7 +244,6 @@ function InsertLanguageDetails() {
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
         data: valdata,
         success: function (data) {
-            debugger;
             getResumeDetails('tabLanguage');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -280,9 +255,11 @@ function InsertLanguageDetails() {
 function ViewResume() {
     $("#frmViewResume").submit();
 }
+function ChangeSelectedTemplate() {
+    $("#frmChangeTemplate").submit();
+}
 
 function TabClick(tab) {
-    debugger
     $(".column").css("background-color", "black");
     $("#" + tab).css("background-color", "#f5af05");
 
@@ -336,7 +313,6 @@ function TabClick(tab) {
     }
 }
 function onClickWorkingCompany(i) {
-    debugger
     if ($("#checkBoxWorkingCompany" + i).prop('checked') == true) {
         $("#hiddenWrkngCmpny" + i).val(true);
         $("#dateExpEndDate" + i).prop('disabled', true);
@@ -347,7 +323,6 @@ function onClickWorkingCompany(i) {
     }
 }
 function addEmployment() {
-    debugger
     var isValid = validateExperience();
     if (isValid) {
         var valdata = $("#frmExperienceDetails").serialize();
@@ -358,14 +333,12 @@ function addEmployment() {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: valdata,
             success: function (result) {
-                debugger
                 $("#expPartial").html(result);
             }
         });
     }
 }
 function addEducation() {
-    debugger
     var isValid = validateEducation();
     if (isValid) {
         var valdata = $("#frmEducationDetails").serialize();
@@ -376,14 +349,12 @@ function addEducation() {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: valdata,
             success: function (result) {
-                debugger
                 $("#eduPartial").html(result);
             }
         });
     }
 }
 function addSkill() {
-    debugger
     var isValid = validateSkill();
     if (isValid) {
         var valdata = $("#frmSkillsDetails").serialize();
@@ -394,7 +365,6 @@ function addSkill() {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: valdata,
             success: function (result) {
-                debugger
                 $('#skillsPartial').html(null);
                 $('#skillsPartial').html(result);
             }
@@ -402,7 +372,6 @@ function addSkill() {
     }
 }
 function addHobby() {
-    debugger
     var isValid = validateHobby();
     if (isValid) {
         var valdata = $("#frmHobbyDetails").serialize();
@@ -413,14 +382,12 @@ function addHobby() {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: valdata,
             success: function (result) {
-                debugger
                 $("#hobbyPartial").html(result);
             }
         });
     }
 }
 function addLanguage() {
-    debugger
     var isValid = validateLanguage();
     if (isValid) {
         var valdata = $("#frmLanguageDetails").serialize();
@@ -431,36 +398,28 @@ function addLanguage() {
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             data: valdata,
             success: function (result) {
-                debugger
                 $("#LanguagePartial").html(result);
             }
         });
     }
 }
 function removeEmployment(index) {
-    debugger
     $('#hiddenEmplIsActive' + index).val(false);
-    //$('#expTopDiv' + index).hide();
     $('#expTopDiv' + index).hide();
 }
 function removeEducation(index) {
-    debugger
     $('#hiddenEduIsActive' + index).val(false);
     $('#eduTopDiv' + index).hide();
 }
 function removeSkill(index) {
-    debugger
     $('#hiddenSkillsIsActive' + index).val(false);
-    /*  $('#sklTopDiv' + index).css({ "display": "none" });*/
     $('#sklTopDiv' + index).hide();
 }
 function removeHobby(index) {
-    debugger
     $('#hiddenHobbyIsActive' + index).val(false);
     $('#hbyTopDiv' + index).hide();
 }
 function removeLanguage(index) {
-    debugger
     $('#hiddenLngIsActive' + index).val(false);
     $('#lngTopDiv' + index).hide();
 }
@@ -470,7 +429,6 @@ function formatDate(date) {
     return (date.getDate().toString().length > 1 ? date.getDate() : "0" + date.getDate()) + "-" + (month.toString().length > 1 ? month : "0" + month) + "-" + date.getFullYear();
 }
 function validateExperience() {
-    debugger
     var isValid = true;
     $(".clsExp").each(function () {
         if ($(this).find(".clsIsActive").val().toLowerCase() == "true") {
@@ -609,7 +567,6 @@ function validateExperience() {
     return isValid;
 }
 function validateEducation() {
-    debugger
     var isValid = true;
     $(".clsEdu").each(function () {
         if ($(this).find(".clsEduIsActive").val().toLowerCase() == "true") {
@@ -667,7 +624,6 @@ function validateEducation() {
     return isValid;
 }
 function validateSkill() {
-    debugger
     var isValid = true;
     $(".clsSkill").each(function () {
         if ($(this).find(".clsSkillIsActive").val().toLowerCase() == "true") {
@@ -681,22 +637,21 @@ function validateSkill() {
                 $(this).find(".clsSkillName").css("border-color", "");
             }
 
-            if ($(this).find(".clsRating").val() == null || $(this).find(".clsRating").val() == '' || $(this).find(".clsRating").val() == '0'
-                || parseInt($(this).find(".clsRating").val()) > 5 || parseInt($(this).find(".clsRating").val()) < 0) {
-                $(this).find(".clsRating").next("span").html("Please enter a rating between 0 to 5");
-                $(this).find(".clsRating").css("border-color", "red");
-                isValid = false;
-            }
-            else {
-                $(this).find(".clsRating").next("span").html("");
-                $(this).find(".clsRating").css("border-color", "");
-            }
+            //if ($(this).find(".clsRating").val() == null || $(this).find(".clsRating").val() == '' || $(this).find(".clsRating").val() == '0'
+            //    || parseInt($(this).find(".clsRating").val()) > 5 || parseInt($(this).find(".clsRating").val()) < 0) {
+            //    $(this).find(".clsRating").next("span").html("Please enter a rating between 0 to 5");
+            //    $(this).find(".clsRating").css("border-color", "red");
+            //    isValid = false;
+            //}
+            //else {
+            //    $(this).find(".clsRating").next("span").html("");
+            //    $(this).find(".clsRating").css("border-color", "");
+            //}
         }
     });
     return isValid;
 }
 function validateLanguage() {
-    debugger
     var isValid = true;
     $(".clsLang").each(function () {
         if ($(this).find(".clsLngIsActive").val().toLowerCase() == "true") {
@@ -714,7 +669,6 @@ function validateLanguage() {
     return isValid;
 }
 function validateHobby() {
-    debugger
     var isValid = true;
     $(".clsHobby").each(function () {
         if ($(this).find(".clsHobbyIsActive").val().toLowerCase() == "true") {

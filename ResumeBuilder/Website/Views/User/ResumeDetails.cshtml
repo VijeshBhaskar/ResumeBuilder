@@ -42,10 +42,16 @@
 <div id="loader">
 </div>
 <div style="float:right !important;">
-    @*@using (Html.BeginForm("ViewResume", "User", FormMethod.Post, new { id = "frmViewResume" }))
+    @using (Html.BeginForm("ViewResume", "User", FormMethod.Post, new { id = "frmViewResume" }))
     {
         <i class="fa fa-eye" onclick="ViewResume();"> Preview Resume</i>
-    }*@
+    }
+    @using (Html.BeginForm("TemplateSelection", "User", FormMethod.Post, new { id = "frmChangeTemplate" }))
+    {
+            <i class="fas fa-edit" onclick="ChangeSelectedTemplate();">Change Template</i>
+    }
+
+    
 </div>
 <div class="row" style="margin-top:10px;">
     <div class="col-md-6" style="margin:auto !important;">

@@ -27,12 +27,6 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Start Date</label>
-                            @*@Html.TextBoxFor(model => Model.EducationDetailsModel[i].StartDate, new
-                                {
-                                    @type = "date",
-                                    @class = "form-control datepicker",
-                                    @Value = Model.EducationDetailsModel[i].StartDate.ToString("yyyy-MM-dd")
-                                })*@
                             @Html.TextBoxFor(model => model.EducationDetailsModel[i].StartDate, new
                        {
                            @type = "date",
@@ -46,12 +40,6 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>End Date</label>
-                            @*@Html.TextBoxFor(model => Model.EducationDetailsModel[i].EndDate, new
-                                {
-                                    @type = "date",
-                                    @class = "form-control datepicker",
-                                    @Value = Model.EducationDetailsModel[i].EndDate.ToString("yyyy-MM-dd")
-                                })*@
                             @Html.TextBoxFor(model => model.EducationDetailsModel[i].EndDate, new
                        {
                            @type = "date",

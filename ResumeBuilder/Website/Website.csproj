@@ -154,7 +154,6 @@
     <Content Include="dist\css\alt\adminlte.plugins.min.css" />
     <Content Include="dist\img\loader.gif" />
     <Content Include="dist\img\Templates\Resume1.png" />
-    <Content Include="dist\img\xpel-logo.png" />
     <Content Include="dist\js\adminlte.js" />
     <Content Include="dist\js\adminlte.min.js" />
     <Content Include="dist\js\pages\dashboard.js" />
@@ -2010,7 +2009,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Common\Notification\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dist\css\adminlte.css.map" />
